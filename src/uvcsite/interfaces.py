@@ -1,6 +1,15 @@
-from grokcore.site import IApplication
+import grokcore.site
+import grok.interfaces
+import zope.interface
 
 
-class IUVCSite(IApplication):
-    """UVC-Site site object
-    """
+class IUVCSite(grokcore.site.IApplication):
+    pass
+
+
+class IHomeFolder(grok.interfaces.IContainer):
+    pass
+
+
+class IHomeFolderManager(zope.interface.Interface):
+    pass

@@ -1,0 +1,6 @@
+<input type="hidden" value="#" id="#" class="form-control"
+       tal:attributes="name widget.identifier;
+                       value widget.inputValue();
+                       id widget.htmlId();
+                       "/>
+<p tal:content="widget.inputValue()"/>

@@ -1,0 +1,6 @@
+<div>
+  <h1 tal:content="view.title"> </h1>
+  <p class="big" tal:content="view.description"> </p> 
+  <span tal:replace="structure view.renderTable()"> </span>
+  <div class="table-batch" tal:content="structure view.renderBatch()"> </div>
+</div>

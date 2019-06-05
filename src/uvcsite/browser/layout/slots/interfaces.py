@@ -41,6 +41,11 @@ class IBeforeActions(zope.interface.Interface):
     """
 
 
+class IPersonalMenu(zope.interface.Interface):
+    """
+    """
+
+    
 class IExtraInfo(zope.interface.Interface):
     """
     """
@@ -54,6 +59,7 @@ __all__ = [
     "IFooter",
     "IHeaders",
     "IPageTop",
+    "IPersonalMenu",
     "ITabs",
     "IToolbar",
     ]

@@ -22,7 +22,7 @@ setup(name='uvc3k',
                         'grok',
                         'grokui.admin',
                         'fanstatic',
-                        'zope.fanstatic',
+                        'zope.fanstatic[test]',
                         'grokcore.chameleon',
                         'grokcore.startup',
                         # Add extra requirements here

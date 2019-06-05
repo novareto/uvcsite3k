@@ -21,7 +21,8 @@ def test_suite():
             doctest.ELLIPSIS +
             doctest.NORMALIZE_WHITESPACE +
             doctest.REPORT_NDIFF),
-        globs={'getRootFolder': browser_layer.getRootFolder})
+        globs={'getRootFolder': browser_layer.getRootFolder,
+               'wsgi_app': browser_layer.make_wsgi_app})
     app_test.layer = browser_layer
 
     suite.addTest(app_test)

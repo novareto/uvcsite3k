@@ -1,9 +1,10 @@
 import grok
+import uvcsite.browser
 import uvcsite.app
 import uvcsite.resource
 
 
-class Index(grok.View):
+class Index(uvcsite.browser.Page):
     grok.context(uvcsite.app.Uvcsite)
     
     def update(self):

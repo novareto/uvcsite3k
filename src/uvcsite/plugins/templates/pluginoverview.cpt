@@ -1,0 +1,35 @@
+<form action="." tal:attributes="action request.URL" method="post"
+      enctype="multipart/form-data" tal:omit-tag="not view.actions">
+  <div id="plugin">
+    <h1 tal:content="context.title" />
+    <h2 tal:condition="context.description">
+      <small tal:content="context.description" />
+    </h2>
+
+    <tal:info tal:replace="structure provider:plugin_info" />
+
+    <ul tal:condition="view.status.infos">
+      <li tal:repeat="info view.status.infos">
+        <span tal:content="infos" />
+      </li>
+    </ul>
+
+    <div id="plugin-status"
+         tal:condition="view.result is not None"
+         tal:content="structure view.result" />
+
+    <hr />
+
+    <div class="errors" tal:condition="view.errors">
+      <div class="error" tal:repeat="error view.errors">
+        <span tal:content="error.title" />
+      </div>
+    </div>
+    
+    <div class="actions btn-group" tal:condition="view.actionWidgets">
+      <tal:actions repeat="widget view.actionWidgets">
+        <tal:widget tal:content="structure widget.render()" />
+      </tal:actions>
+    </div>
+  </div>
+</form>

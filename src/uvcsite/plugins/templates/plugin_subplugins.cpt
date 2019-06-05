@@ -1,0 +1,8 @@
+<tal:info>
+  <dl>
+    <tal:subplugin tal:repeat="sp context.subplugins.values()">
+    <dt tal:content="sp.title" />
+    <dd tal:content="sp.status.state.value" />
+    </tal:subplugin>
+  </dl>
+</tal:info>

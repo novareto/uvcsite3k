@@ -1,0 +1,7 @@
+<div tal:attributes="id viewlet.id" tal:condition="viewlet.menus">
+  <ul class="nav nav-pills">
+    <li tal:repeat="menu viewlet.menus" tal:attributes="class python: menu['selected'] and 'active' or ''" >
+    <a href="" tal:attributes="href menu.action" tal:content="menu.title"/>
+    </li>
+  </ul>
+</div>

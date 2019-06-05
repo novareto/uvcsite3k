@@ -1,0 +1,10 @@
+<tal:info>
+  <h3 tal:condition="view.is_installed" class="installed">
+    <i class="fas fa-check"></i>
+    This plugin is installed
+  </h3>
+  <h3 tal:condition="not view.is_installed" class="not-installed">
+    <i class="fas fa-exclamation-circle"></i>
+    This plugin is not installed
+  </h3>
+</tal:info>

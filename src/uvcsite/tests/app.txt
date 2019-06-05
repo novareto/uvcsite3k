@@ -1,11 +1,11 @@
 Do a functional doctest test on the app.
 ========================================
 
-Let's first create an instance of Uvc3k at the top level:
+Let's first create an instance of Uvcsite at the top level:
 
-    >>> from uvc3k.app import Uvc3k
+    >>> from uvcsite.app import Uvcsite
     >>> root = getRootFolder()
-    >>> root['app'] = Uvc3k()
+    >>> root['app'] = Uvcsite()
 
 Run tests in the testbrowser
 ----------------------------
@@ -29,7 +29,7 @@ Check some basic information about the page you visit:
     >>> print browser.contents
     <html>
     <head>
-        <link rel="stylesheet" type="text/css" href="http://localhost/fanstatic/uvc3k/style.css" />
+        <link rel="stylesheet" type="text/css" href="http://localhost/fanstatic/uvcsite/style.css" />
     <BLANKLINE>
     <base href="http://localhost/app/@@index" />
     <BLANKLINE>
@@ -37,9 +37,9 @@ Check some basic information about the page you visit:
     <body>
       <h1>Congratulations!</h1>
       <p>Your Grok application is up and running.
-      Edit <code>uvc3k/app_templates/index.pt</code> to change
+      Edit <code>uvcsite/app_templates/index.pt</code> to change
       this page.</p>
-      <img src="http://localhost/fanstatic/uvc3k/evencaveman.jpg"/>
+      <img src="http://localhost/fanstatic/uvcsite/evencaveman.jpg"/>
     </body>
     </html>
     <BLANKLINE>

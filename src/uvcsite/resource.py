@@ -1,5 +1,5 @@
 from fanstatic import Library, Resource
 
-library = Library('uvc3k', 'static')
+library = Library('uvcsite', 'static')
 
 style = Resource(library, 'style.css')

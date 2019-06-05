@@ -1,4 +1,4 @@
-# The tests in test_uvc3k.py are picked up by zope.testrunner.
+# The tests in test_uvcsite.py are picked up by zope.testrunner.
 
 # When decorating a unittest.TestCase or doctest with a layer, the layer is
 # used to group tests and execute setup and teardown of the grok environment
@@ -9,9 +9,9 @@ import doctest
 
 from zope.fanstatic.testing import ZopeFanstaticBrowserLayer
 
-import uvc3k.tests
+import uvcsite.tests
 
-browser_layer = ZopeFanstaticBrowserLayer(uvc3k.tests)
+browser_layer = ZopeFanstaticBrowserLayer(uvcsite.tests)
 
 def test_suite():
     suite = unittest.TestSuite()

@@ -1,6 +1,6 @@
 import grok
+from uvcsite import resource
 
-from uvc3k import resource
 
 class Uvc3k(grok.Application, grok.Container):
     pass

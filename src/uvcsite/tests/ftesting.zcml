@@ -1,10 +1,10 @@
 <configure
    xmlns="http://namespaces.zope.org/zope"
-   i18n_domain="uvc3k"
-   package="uvc3k"
+   i18n_domain="uvcsite"
+   package="uvcsite"
    >
 
-  <include package="uvc3k" />
+  <include package="uvcsite" />
 
   <!-- Typical functional testing security setup -->
   <securityPolicy

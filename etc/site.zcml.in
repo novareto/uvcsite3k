@@ -1,9 +1,9 @@
 <configure xmlns="http://namespaces.zope.org/zope"
-           i18n_domain="uvc3k">
+           i18n_domain="uvcsite">
 
-  <include package="uvc3k" />
+  <include package="uvcsite" />
 
-    <configure i18n_domain="uvc3k">
+    <configure i18n_domain="uvcsite">
 
       <unauthenticatedPrincipal id="zope.anybody"
                                 title="Unauthenticated User" />

@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 version = '0.0'
 
-setup(name='uvc3k',
+setup(name='uvcsite',
       version=version,
       description="",
       long_description="""\
@@ -22,13 +22,13 @@ setup(name='uvc3k',
                         'grok',
                         'grokui.admin',
                         'fanstatic',
-                        'zope.fanstatic',
+                        'zope.fanstatic[test]',
                         'grokcore.chameleon',
                         'grokcore.startup',
                         # Add extra requirements here
                         ],
       entry_points={
           'fanstatic.libraries': [
-              'uvc3k = uvc3k.resource:library',
+              'uvcsite = uvcsite.resource:library',
           ]
       })

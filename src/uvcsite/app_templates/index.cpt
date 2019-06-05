@@ -4,7 +4,7 @@
 <body>
   <h1>Congratulations!</h1>
   <p>Your Grok application is up and running.
-  Edit <code>uvc3k/app_templates/index.pt</code> to change
+  Edit <code>uvcsite/app_templates/index.pt</code> to change
   this page.</p>
   <img tal:attributes="src static['evencaveman.jpg']"/>
 </body>

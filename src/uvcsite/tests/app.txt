@@ -17,8 +17,8 @@ information, see http://pypi.python.org/pypi/zope.testbrowser.
 
 Create a browser and visit the instance you just created:
 
-    >>> from zope.app.wsgi.testlayer import Browser
-    >>> browser = Browser()
+    >>> from zope.testbrowser.browser import Browser
+    >>> browser = Browser(wsgi_app=wsgi_app())
     >>> browser.open('http://localhost/app')
 
 Check some basic information about the page you visit:
@@ -26,14 +26,14 @@ Check some basic information about the page you visit:
     >>> browser.url
     'http://localhost/app'
 
-    >>> print browser.contents
+    >>> print(browser.contents)
     <html>
     <head>
-        <link rel="stylesheet" type="text/css" href="http://localhost/fanstatic/uvcsite/style.css" />
+    <link rel="stylesheet" type="text/css" href="http://localhost/fanstatic/uvcsite/style.css" />
     <BLANKLINE>
     <base href="http://localhost/app/@@index" />
     <BLANKLINE>
-    </head>
+    <link rel="stylesheet" type="text/css" href="http://localhost/fanstatic/uvcsite/style.css" /></head>
     <body>
       <h1>Congratulations!</h1>
       <p>Your Grok application is up and running.

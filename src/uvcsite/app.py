@@ -1,10 +1,8 @@
 import grok
-from uvcsite import resource
+import uvcsite.interfaces
+import zope.interface
 
 
-class Uvc3k(grok.Application, grok.Container):
+@zope.interface.implementer(uvcsite.interfaces.IUVCSite) 
+class Uvcsite(grok.Application, grok.Container):
     pass
-
-class Index(grok.View):
-    def update(self):
-        resource.style.need()

@@ -1,18 +1,18 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
-
 import json
 import grok
-import uvcsite
+import uvcsite.content.interfaces
 
-from dolmen.content import IContent
 from hurry.workflow.interfaces import IWorkflowState
-from uvc.layout.forms.event import AfterSaveEvent
-from uvcsite.content import IProductFolder
 from uvcsite.workflow.basic_workflow import titleForState
-from z3c.schema2json import serialize
-from z3c.schema2json.tools import deserialize
 from zope.interface import Invalid, Interface, implementer
+
+
+def serialize(*args):
+    pass
+
+
+def deserialize(*args):
+    pass
 
 
 class JSONRestLayer(grok.IRESTLayer):
@@ -22,7 +22,7 @@ class JSONRestLayer(grok.IRESTLayer):
 
 class ProductFolderRest(grok.REST):
     grok.layer(JSONRestLayer)
-    grok.context(IProductFolder)
+    grok.context(uvcsite.content.interfaces.IProductFolder)
     grok.require('zope.View')
 
     def GET(self):
@@ -32,13 +32,12 @@ class ProductFolderRest(grok.REST):
             state = titleForState(IWorkflowState(obj).getState())
             container['items'].append(
                     {'meta_type': obj.meta_type,
-                        '@url': 'http://www.google.de',
-                        'id': obj.__name__,
-                        'titel': obj.title,
-                        'author': obj.principal.id,
-                        'datum': obj.modtime.strftime('%d.%m.%Y'),
-                        'status': state}
-            )
+                     '@url': 'http://www.google.de',
+                     'id': obj.__name__,
+                     'titel': obj.title,
+                     'author': obj.principal.id,
+                     'datum': obj.modtime.strftime('%d.%m.%Y'),
+                     'status': state})
         self.request.response.setHeader('Access-Control-Allow-Origin', '*')
         return json.dumps(container)
 
@@ -55,7 +54,6 @@ class ProductFolderRest(grok.REST):
                 name=content.meta_type,
                 id=content.__name__
             )
-            grok.notify(AfterSaveEvent(content, self.request))
         else:
             result = errors
         return json.dumps(result) 
@@ -63,7 +61,7 @@ class ProductFolderRest(grok.REST):
 
 class ContentRest(grok.REST):
     grok.layer(JSONRestLayer)
-    grok.context(uvcsite.IContent)
+    grok.context(uvcsite.content.interfaces.IContent)
     grok.require('zope.View')
 
     def GET(self):
@@ -87,12 +85,12 @@ class IJSONSerializer(Interface):
 class DefaultSerializer(grok.Adapter):
     """ Default Serializer for IContent
     """
-    grok.context(IContent)
+    grok.context(uvcsite.content.interfaces.IContent)
 
     def work(self, payload, interface, errors):
         try:
             deserialize(payload, interface, self.context)
-        except Exception, e:  # Here should be a DeserializeError
+        except Exception as e:  # Here should be a DeserializeError
             for field, (exception, element) in e.field_errors.items():
                 error = dict(
                     field=field.__name__,
@@ -101,5 +99,5 @@ class DefaultSerializer(grok.Adapter):
                 errors.append(error)
         try:
             interface.validateInvariants(self.context)
-        except Invalid, e:
+        except Invalid as e:
             errors.append(dict(text="Invariant: %s" % e))

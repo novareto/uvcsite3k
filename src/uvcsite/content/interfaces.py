@@ -16,11 +16,6 @@ class IProductFolder(IContainer):
     """
 
 
-class IFolderColumnTable(Interface):
-    """Provide standard folder columns
-    """
-
-
 class IContent(Interface):
 
     schema = Attribute('Iterable of interfaces representing the schema')

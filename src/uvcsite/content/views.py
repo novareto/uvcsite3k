@@ -1,22 +1,15 @@
-# -*- coding: utf-8 -*-
-# Copyright (c) 2007-2008 NovaReto GmbH
-# cklinger@novareto.de
-
 import grok
-import uvcsite
+import uvcsite.browser
 import uvcsite.utils.forms
+import uvcsite.content.interfaces
+import uvcsite.content.tables
+import uvcsite.browser
+import uvcsite.browser.forms
+import uvcsite.browser.layout.slots.interfaces
 
-from dolmen.app.layout import MenuViewlet
-from dolmen.app.layout.viewlets import ContextualActions
-from dolmen.content import schema
 from megrok.pagetemplate import PageTemplate
 from megrok.z3ctable import Values
-from uvc.layout import TablePage
-from uvc.layout import interfaces
-from uvcsite import IGetHomeFolderUrl
 from uvcsite import uvcsiteMF as _
-from uvcsite.content import IContent, IProductFolder
-from uvcsite.interfaces import IFolderListingTable
 from zeam.form import base
 from zeam.form.base import Fields
 from zeam.form.base.interfaces import ISimpleForm
@@ -28,11 +21,10 @@ from zope.pagetemplate.interfaces import IPageTemplate
 grok.templatedir('templates')
 
 
-@implementer(IFolderListingTable)
-class Index(TablePage):
-    grok.title(u'Übersicht')
+@implementer(uvcsite.content.tables.IContainerTable)
+class Index(uvcsite.browser.TablePage):
     grok.name('index')
-    grok.context(IProductFolder)
+    grok.context(uvcsite.content.interfaces.IProductFolder)
     grok.require('uvc.ViewContent')
 
     description = u"Hier finden Sie alle Dokumente dazu."
@@ -56,16 +48,16 @@ class Index(TablePage):
             for key in items:
                 if key in self.context:
                     self.executeDelete(self.context[key])
-        TablePage.update(self)
+        super().update()
 
     def executeDelete(self, item):
         self.flash(_(u'Ihre Dokumente wurden entfernt'))
         del item.__parent__[item.__name__]
 
     def getAddLinkUrl(self):
-        adapter = getMultiAdapter(
-            (self.request.principal, self.request), IGetHomeFolderUrl)
-        return adapter.getAddURL(self.context.getContentType())
+        homefolder = uvcsite.interfaces.IHomeFolder(self.request)
+        url = grok.url(self.request, homefolder)
+        return f"{url}/@@add"
 
     def getAddTitle(self):
         return self.context.getContentName()
@@ -88,7 +80,7 @@ class ProductFolderValues(Values):
     """This Adapter returns IContent Objects
        form child folders
     """
-    grok.adapts(IProductFolder, None, Index)
+    grok.adapts(uvcsite.content.interfaces.IProductFolder, None, Index)
 
     @property
     def values(self):
@@ -100,19 +92,19 @@ class ProductFolderValues(Values):
         return results
 
 
-class ExtraViewsViewlet(ContextualActions):
+class ExtraViewsViewlet(grok.ViewletManager):
     grok.order(20)
     grok.baseclass()
     grok.view(Interface)
     grok.name('extra-views')
-    grok.viewletmanager(interfaces.IAboveContent)
+    grok.viewletmanager(uvcsite.browser.layout.slots.interfaces.IAboveContent)
     grok.require("zope.Public")
 
     # menu_factory = menus.ExtraViews
     menu_factory = object()
 
     def update(self):
-        MenuViewlet.update(self)
+        super().update()
         if not len(self.menu.viewlets) or ISimpleForm.providedBy(self.view):
             self.actions = None
         else:
@@ -136,8 +128,8 @@ class ExtraViewsViewlet(ContextualActions):
 class AddMenuViewlet(grok.Viewlet):
     grok.view(Index)
     grok.order(30)
-    grok.context(IProductFolder)
-    grok.viewletmanager(interfaces.ITabs)
+    grok.context(uvcsite.content.interfaces.IProductFolder)
+    grok.viewletmanager(uvcsite.browser.layout.slots.interfaces.ITabs)
 
     def render(self):
         template = getMultiAdapter((self, self.request), IPageTemplate)
@@ -148,8 +140,8 @@ class AddMenu(PageTemplate):
     grok.view(AddMenuViewlet)
 
 
-class Add(uvcsite.AddForm):
-    grok.context(IProductFolder)
+class Add(uvcsite.browser.forms.AddForm):
+    grok.context(uvcsite.content.interfaces.IProductFolder)
     grok.require('uvc.AddContent')
 
     @property
@@ -161,8 +153,7 @@ class Add(uvcsite.AddForm):
     @property
     def fields(self):
         content_object = self.context.getContentType()
-        schemas = schema.bind().get(content_object)
-        return Fields(*schemas)
+        return Fields(*content_object.schema)
 
     def create(self, data):
         content = self.context.getContentType()()
@@ -177,16 +168,14 @@ class Add(uvcsite.AddForm):
         return self.url(self.context)
 
 
-class Edit(uvcsite.Form):
-    grok.context(IContent)
+class Edit(uvcsite.browser.Form):
+    grok.context(uvcsite.content.interfaces.IContent)
     grok.require('uvc.EditContent')
     ignoreContent = False
 
     @property
     def fields(self):
-        content_object = self.context
-        schemas = schema.bind().get(content_object)
-        return Fields(*schemas)
+        return Fields(*self.context.schema)
 
     @base.action(u'Speichern')
     def handle_apply(self):
@@ -202,8 +191,8 @@ class Edit(uvcsite.Form):
             self.flash('Kein Änderung', type="info")
 
 
-class Display(uvcsite.Form):
-    grok.context(IContent)
+class Display(uvcsite.browser.Form):
+    grok.context(uvcsite.content.interfaces.IContent)
     grok.name('index')
     grok.require('uvc.ViewContent')
 
@@ -212,6 +201,4 @@ class Display(uvcsite.Form):
 
     @property
     def fields(self):
-        content_object = self.context
-        schemas = schema.bind().get(content_object)
-        return Fields(*schemas)
+        return Fields(*self.context.schema)

@@ -1,7 +1,7 @@
 import sys
 import operator
 from zeam.form.base.actions import Actions
-from zeam.form.base.datamanagers import ObjectDataManager
+from zeam.form.base.datamanager import ObjectDataManager
 from zeam.form.base.fields import Fields
 from zeam.form.base.interfaces import IDataManager
 from zeam.form.base.markers import NO_VALUE, NO_CHANGE

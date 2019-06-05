@@ -5,8 +5,11 @@
 
   <include package=".auth" />
   <include package=".extranetmembership" />
+  <include package=".content" />
   <include package=".plugins" />
   <include package=".browser" />
+  <include package=".workflow" />
 
   <grok:grok package=".app" />
+  <grok:grok package=".permissions" />
 </configure>

@@ -1,13 +1,11 @@
-# -*- coding: utf-8 -*-
-# Copyright (c) 2007-2011 NovaReto GmbH
-# cklinger@novareto.de
-
 import martian
 import grokcore.component
+import uvcsite.content.components
+import uvcsite.content.directive
+import uvcsite.content.interfaces
+import zope.component.zcml
 
 from martian.error import GrokError
-from uvcsite.content import ProductFolder, contenttype, IProductFolder
-import zope.component.zcml
 
 
 def default_name(factory, module=None, **data):
@@ -15,8 +13,8 @@ def default_name(factory, module=None, **data):
 
 
 class ProductFolderGrokker(martian.ClassGrokker):
-    martian.component(ProductFolder)
-    martian.directive(contenttype)
+    martian.component(uvcsite.content.components.ProductFolder)
+    martian.directive(uvcsite.content.directive.contenttype)
     martian.directive(grokcore.component.name, get_default=default_name)
 
     def execute(self, factory, config, contenttype, name):
@@ -28,7 +26,8 @@ class ProductFolderGrokker(martian.ClassGrokker):
 
         name = name.capitalize()
         config.action(
-            discriminator=('utility', IProductFolder, name),
+            discriminator=(
+                'utility', uvcsite.content.interfaces.IProductFolder, name),
             callable=zope.component.zcml.handler,
             args=('registerUtility', factory, IProductFolder, name),
             )

@@ -1,18 +1,20 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
-
 import grok
 import uvcsite
+import uvcsite.content.interfaces
 
-from dolmen.content import IContent
 from hurry.workflow.interfaces import IWorkflowState
 from lxml import etree
 from lxml.builder import E
-from uvc.layout.forms.event import AfterSaveEvent
-from uvcsite.content import IProductFolder
 from uvcsite.workflow.basic_workflow import titleForState
-from z3c.schema2xml import serialize_to_tree, deserialize
 from zope.interface import Invalid, Interface, implementer
+
+
+def serialize_to_tree(*args):
+    pass
+
+
+def deserialize(*args):
+    pass
 
 
 class RestLayer(grok.IRESTLayer):
@@ -22,7 +24,7 @@ class RestLayer(grok.IRESTLayer):
 
 class ProductFolderRest(grok.REST):
     grok.layer(RestLayer)
-    grok.context(IProductFolder)
+    grok.context(uvcsite.content.interfaces.IProductFolder)
     grok.require('zope.View')
 
     def GET(self):
@@ -56,7 +58,6 @@ class ProductFolderRest(grok.REST):
                 name=content.meta_type,
                 id=content.__name__
             )
-            grok.notify(AfterSaveEvent(content, self.request))
         else:
             result = etree.Element('failure')
             result.extend(errors)
@@ -65,7 +66,7 @@ class ProductFolderRest(grok.REST):
 
 class ContentRest(grok.REST):
     grok.layer(RestLayer)
-    grok.context(uvcsite.IContent)
+    grok.context(uvcsite.content.interfaces.IContent)
     grok.require('zope.View')
 
     def GET(self):
@@ -95,12 +96,12 @@ class ISerializer(Interface):
 class DefaultSerializer(grok.Adapter):
     """ Default Serializer for IContent
     """
-    grok.context(IContent)
+    grok.context(uvcsite.content.interfaces.IContent)
 
     def work(self, payload, interface, errors):
         try:
             deserialize(payload, interface, self.context)
-        except Exception, e:  # Here should be a DeserializeError
+        except Exception as e:  # Here should be a DeserializeError
             for field, (exception, element) in e.field_errors.items():
                 error = etree.Element(
                     'error',
@@ -111,5 +112,5 @@ class DefaultSerializer(grok.Adapter):
                 errors.append(error)
         try:
             interface.validateInvariants(self.context)
-        except Invalid, e:
+        except Invalid as e:
             errors.append(etree.Element('error', text="Invariant: %s" % e))

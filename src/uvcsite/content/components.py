@@ -1,10 +1,8 @@
-# -*- coding: utf-8 -*-
-
 import grok
+import uvcsite.content.interfaces
+
 from grokcore.component import directive
 from uvcsite.content.directive import contenttype
-from uvcsite.content.interfaces import (
-    IContent, IProductFolder, IFolderColumnTable)
 from uvcsite.utils.shorties import getPrincipal
 from zope.container.interfaces import INameChooser
 from zope.dublincore.interfaces import IZopeDublinCore
@@ -12,7 +10,7 @@ from zope.interface import implementer
 from zope.pluggableauth.factories import Principal
 
 
-@implementer(IProductFolder, IFolderColumnTable)
+@implementer(uvcsite.content.interfaces.IProductFolder)
 class ProductFolder(grok.Container):
 
     @property
@@ -42,7 +40,7 @@ class ProductFolder(grok.Container):
         return False
 
 
-@implementer(IContent)
+@implementer(uvcsite.content.interfaces.IContent)
 class Content(grok.Model):
     grok.baseclass()
 

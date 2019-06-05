@@ -34,7 +34,10 @@ setup(name='uvcsite',
           'zope.publisher',
           'zope.traversing',
           'js.jquery',
+          'lxml',
           'zeam.jsontemplate',
+          'hurry.workflow',
+          'megrok.z3ctable',
       ],
       entry_points={
           'fanstatic.libraries': [

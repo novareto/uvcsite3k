@@ -1,9 +1,7 @@
-# -*- coding: utf-8 -*-
-# Copyright (c) 2007-2008 NovaReto GmbH
-# cklinger@novareto.de
-
 import grok
 import uvcsite
+import zope.interface
+import zope.container.interfaces
 
 from uvcsite import uvcsiteMF as _
 from megrok.z3ctable import (
@@ -12,14 +10,18 @@ from megrok.z3ctable import (
 from hurry.workflow.interfaces import IWorkflowState
 from zope.dublincore.interfaces import IZopeDublinCore
 from uvcsite.workflow.basic_workflow import titleForState
-from uvcsite.interfaces import IFolderColumnTable, IFolderListingTable
 from zope.traversing.browser import absoluteURL
 
 
+class IContainerTable(zope.interface.Interface):
+    pass
+    
+
 class CheckBox(CheckBoxColumn):
     grok.name('checkBox')
-    grok.context(IFolderColumnTable)
-    table(IFolderListingTable)
+    grok.context(zope.container.interfaces.IContainer)
+    table(IContainerTable)
+
     weight = 0
     cssClasses = {'th': 'checkBox'}
     header = u""
@@ -35,9 +37,9 @@ class CheckBox(CheckBoxColumn):
 
 class Link(LinkColumn):
     grok.name('link')
-    grok.context(IFolderColumnTable)
+    grok.context(zope.container.interfaces.IContainer)
     weight = 1
-    table(IFolderListingTable)
+    table(IContainerTable)
     header = _(u"Titel")
     linkName = u"edit"
 
@@ -59,19 +61,19 @@ class Link(LinkColumn):
 
 class MetaTypeColumn(GetAttrColumn):
     grok.name('meta_type')
-    grok.context(IFolderColumnTable)
+    grok.context(zope.container.interfaces.IContainer)
     header = _(u'Objekt')
     attrName = 'meta_type'
     weight = 2
-    table(IFolderListingTable)
+    table(IContainerTable)
 
 
 class CreatorColumn(Column):
     grok.name('creator')
-    grok.context(IFolderColumnTable)
+    grok.context(zope.container.interfaces.IContainer)
     header = _(u"Autor")
     weight = 99
-    table(IFolderListingTable)
+    table(IContainerTable)
 
     def renderCell(self, item):
         return ', '.join(IZopeDublinCore(item).creators)
@@ -79,10 +81,10 @@ class CreatorColumn(Column):
 
 class ModifiedColumn(Column):
     grok.name('modified')
-    grok.context(IFolderColumnTable)
+    grok.context(zope.container.interfaces.IContainer)
     header = _(u"Datum")
     weight = 100
-    table(IFolderListingTable)
+    table(IContainerTable)
 
     def getSortKey(self, item):
         return item.modtime
@@ -93,11 +95,11 @@ class ModifiedColumn(Column):
 
 class StateColumn(GetAttrColumn):
     grok.name('state')
-    grok.context(IFolderColumnTable)
+    grok.context(zope.container.interfaces.IContainer)
     header = _(u'Status')
     attrName = 'status'
     weight = 3
-    table(IFolderListingTable)
+    table(IContainerTable)
 
     def getValue(self, obj):
         state = IWorkflowState(obj).getState()

@@ -4,7 +4,7 @@ import zope.security
 import uvcsite.interfaces
 import uvcsite.auth.event
 
-from zope.component import getUtility
+from zope.component import getUtility, queryUtility
 from zope.event import notify
 from zope.pluggableauth.factories import PrincipalInfo, Principal
 from zope.pluggableauth.interfaces import IAuthenticatorPlugin
@@ -50,8 +50,9 @@ class UVCAuthenticator(grok.GlobalUtility):
                     and 'password' in credentials):
                 return
             login, password = credentials['login'], credentials['password']
-
-            utility = getUtility(IUserManagement)
+            utility = queryUtility(IUserManagement)
+            if not utility:
+                return None
 
             if hasattr(utility, 'changeLogin'):
                 login = utility.changeLogin(login)

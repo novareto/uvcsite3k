@@ -44,7 +44,7 @@ class CookiesCredentials(grok.GlobalUtility, SessionCredentialsPlugin):
     def make_cookie(login, password):
         credstr = u'%s:%s' % (login, password)
         val = base64.encodestring(credstr.encode('utf-8'))
-        return urllib.quote(val)
+        return urllib.parse.quote(val)
 
     def extractCredentials(self, request):
         if not IHTTPRequest.providedBy(request):

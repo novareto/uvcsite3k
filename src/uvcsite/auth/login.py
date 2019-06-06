@@ -10,7 +10,8 @@ from zope.traversing.browser.absoluteurl import absoluteURL
 from zope.authentication.interfaces import IUnauthenticatedPrincipal
 from zope.location.interfaces import ILocation
 
-from zeam.form.base import action, Form, Fields
+from zeam.form.base import action, Fields
+from uvcsite.browser import Form
 from zeam.form.base.markers import SUCCESS, FAILURE
 from uvcsite import uvcsiteMF as _
 
@@ -50,7 +51,6 @@ class Login(Form):
         data, errors = self.extractData()
         if errors:
             return FAILURE
-
         principal = self.request.principal
         if IUnauthenticatedPrincipal.providedBy(principal):
             self.status = _(u"Login failed")

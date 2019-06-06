@@ -22,8 +22,6 @@
 
       <!-- Replace the following directive if you do not want
            public access -->
-      <grant permission="zope.View"
-             principal="zope.Everybody" />
       <role id="zope.Manager" title="Site Manager" />
       <role id="zope.Member" title="Site Member" />
       <grantAll role="zope.Manager" />

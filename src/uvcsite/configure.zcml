@@ -2,7 +2,6 @@
            xmlns:grok="http://namespaces.zope.org/grok">
   <include package="grok" />
   <includeDependencies package="." />
-
   <include package=".auth" />
   <include package=".extranetmembership" />
   <include package=".content" />

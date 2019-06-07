@@ -13,16 +13,23 @@ import uvcsite.tests
 
 browser_layer = UVCSiteLayer(uvcsite.tests)
 
+
 def test_suite():
     suite = unittest.TestSuite()
 
-    app_test = doctest.DocFileSuite('app.txt', 'auth.txt',
-        optionflags = (
-            doctest.ELLIPSIS +
-            doctest.NORMALIZE_WHITESPACE +
-            doctest.REPORT_NDIFF),
-        globs={'getRootFolder': browser_layer.getRootFolder,
-               'wsgi_app': browser_layer.make_wsgi_app})
+    app_test = doctest.DocFileSuite(
+        "app.txt",
+        "auth.txt",
+        optionflags=(
+            doctest.ELLIPSIS + doctest.NORMALIZE_WHITESPACE + doctest.REPORT_NDIFF
+        ),
+        globs={
+            "getRootFolder": browser_layer.getRootFolder,
+            "wsgi_app": browser_layer.make_wsgi_app,
+            "__name__": "uvcsite.tests",
+        },
+    )
+
     app_test.layer = browser_layer
 
     suite.addTest(app_test)

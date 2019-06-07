@@ -7,30 +7,29 @@
 import unittest
 import doctest
 
-from .test_uvcsite import UVCSiteLayer
-
 import uvcsite.tests
+import uvcsite.testing
+from zope.testing import renormalizing
 
-browser_layer = UVCSiteLayer(uvcsite.tests)
+
+browser_layer = uvcsite.testing.UVCSiteLayer(uvcsite.tests)
 
 
 def test_suite():
     suite = unittest.TestSuite()
-
-    app_test = doctest.DocFileSuite(
-        "app.txt",
-        "auth.txt",
-        optionflags=(
-            doctest.ELLIPSIS + doctest.NORMALIZE_WHITESPACE + doctest.REPORT_NDIFF
-        ),
-        globs={
-            "getRootFolder": browser_layer.getRootFolder,
-            "wsgi_app": browser_layer.make_wsgi_app,
-            "__name__": "uvcsite.tests",
+    test = doctest.DocTestSuite(
+        'uvcsite.tests.auth',
+        checker=renormalizing.RENormalizing(),
+        extraglobs={
+            "layer": browser_layer,
+            "__name__": "uvcsite.tests"
         },
+        optionflags=(
+            doctest.ELLIPSIS+
+            doctest.NORMALIZE_WHITESPACE+
+            doctest.REPORT_NDIFF
+        )
     )
-
-    app_test.layer = browser_layer
-
-    suite.addTest(app_test)
+    test.layer = browser_layer
+    suite.addTest(test)
     return suite

@@ -19,8 +19,8 @@ class ICookieCredentials(Interface):
     """
 
     cookie_name = ASCIILine(
-        title=_(u"Cookie name"),
-        description=_(u"Name of the cookie for storing credentials."),
+        title=_("Cookie name"),
+        description=_("Name of the cookie for storing credentials."),
         required=True,
     )
 
@@ -34,9 +34,9 @@ class CookiesCredentials(grok.GlobalUtility, SessionCredentialsPlugin):
     __parent__ = None
 
     # Required by zope.pluggableauth's IBrowserFormChallenger
-    loginpagename = u"login"
-    loginfield = u"login"
-    passwordfield = u"password"
+    loginpagename = "login"
+    loginfield = "login"
+    passwordfield = "password"
 
     # Required by zope.pluggableauth's ICredentialsPlugin
     challengeProtocol = None
@@ -44,7 +44,7 @@ class CookiesCredentials(grok.GlobalUtility, SessionCredentialsPlugin):
 
     @staticmethod
     def make_cookie(login, password):
-        credstr = u"%s:%s" % (login, password)
+        credstr = f"{login}:{password}"
         val = base64.encodestring(credstr.encode("utf-8"))
         return urllib.parse.quote(val)
 

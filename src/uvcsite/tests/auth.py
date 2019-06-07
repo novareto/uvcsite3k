@@ -1,11 +1,18 @@
+"""
+    >>> from grokcore.component.testing import grok
+    >>> grok('uvcsite.tests.fixtures.usermanagement')
+
+
 Do a functional doctest test on the app.
 ========================================
 
 Let's first create an instance of Uvcsite at the top level:
 
+
+
     >>> from uvcsite.app import Uvcsite
     >>> from zope.component.hooks import setSite
-    >>> root = getRootFolder()
+    >>> root = layer.getRootFolder()
     >>> root['app']
     <uvcsite.app.Uvcsite object at 0...>
 
@@ -37,26 +44,13 @@ Let's first create an instance of Uvcsite at the top level:
 
 Provide an simple Index View where we can demonstrate the login stuff
 
-   >>> from grokcore.component.testing import grok_component
-   >>> from uvcsite.interfaces import IUVCSite
-   >>> from zope.interface import Interface
-   >>> from zope.component import provideAdapter
-   >>> import grok
 
-   >>> class IndexPage(grok.View):
-   ...     grok.name('index')
-   ...     grok.context(Interface)
-   ...     def render(self):
-   ...         return u"Hallo Welt"
-
-   >>> grok_component('IndexPage', IndexPage)
-   True
 
 Only Authorzied people should get access
 ----------------------------------------
 
    >>> from zope.testbrowser.browser import Browser
-   >>> browser = Browser(wsgi_app=wsgi_app())
+   >>> browser = Browser(wsgi_app=layer.make_wsgi_app())
    >>> browser.handleErrors = True 
 
 This means if we open the index page. We get redirected
@@ -89,4 +83,15 @@ Now we are at the Login Page
 
    >>> print(browser.url)
    'http://localhost/app/index'
+"""
 
+import grok
+from zope.interface import Interface
+
+
+class IndexPage(grok.View):
+    grok.name('index')
+    grok.context(Interface)
+   
+    def render(self):
+        return u"Hallo Welt"

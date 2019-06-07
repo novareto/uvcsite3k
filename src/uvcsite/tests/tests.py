@@ -7,16 +7,16 @@
 import unittest
 import doctest
 
-from zope.fanstatic.testing import ZopeFanstaticBrowserLayer
+from .test_uvcsite import UVCSiteLayer
 
 import uvcsite.tests
 
-browser_layer = ZopeFanstaticBrowserLayer(uvcsite.tests)
+browser_layer = UVCSiteLayer(uvcsite.tests)
 
 def test_suite():
     suite = unittest.TestSuite()
 
-    app_test = doctest.DocFileSuite('app.txt', # Add more doctest files here.
+    app_test = doctest.DocFileSuite('app.txt', 'auth.txt',
         optionflags = (
             doctest.ELLIPSIS +
             doctest.NORMALIZE_WHITESPACE +

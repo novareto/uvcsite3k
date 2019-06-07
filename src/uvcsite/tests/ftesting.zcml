@@ -7,6 +7,7 @@
   <include package="uvcsite" />
 
   <!-- Typical functional testing security setup -->
+<!--
   <securityPolicy
       component="zope.securitypolicy.zopepolicy.ZopeSecurityPolicy"
       />
@@ -43,5 +44,5 @@
   <role id="zope.Manager" title="Site Manager" />
   <grantAll role="zope.Manager" />
   <grant role="zope.Manager" principal="zope.mgr" />
-
+-->
 </configure>

@@ -19,20 +19,20 @@ from uvcsite import uvcsiteMF as _
 class ILoginForm(zope.interface.Interface):
     """A simple login form interface.
     """
-    login = zope.schema.TextLine(
-        title=_(u"Username"),
-        required=True)
 
-    password = zope.schema.Password(
-        title=_(u"Password"),
-        required=True)
+    login = zope.schema.TextLine(title=_(u"Username"), required=True)
+
+    password = zope.schema.Password(title=_(u"Password"), required=True)
+
+    camefrom = zope.schema.TextLine(title=_(u"TextLine"), required=True)
 
 
 class Login(Form):
     """A very basic implementation of a login form.
     """
+
     grok.title(_(u"Log in"))
-    grok.require('zope.Public')
+    grok.require("zope.Public")
     grok.context(zope.interface.Interface)
 
     prefix = ""
@@ -46,7 +46,7 @@ class Login(Form):
             field.prefix = u""
         return fields
 
-    @action(_('Log in'))
+    @action(_("Log in"))
     def login(self):
         data, errors = self.extractData()
         if errors:
@@ -56,10 +56,11 @@ class Login(Form):
             self.status = _(u"Login failed")
             return FAILURE
 
-        self.flash(_('You are now logged in as ${name}',
-                     mapping={"name": principal.id}))
+        self.flash(
+            _("You are now logged in as ${name}", mapping={"name": principal.id})
+        )
         #   notify(UserLoginEvent(principal))    # BBB
-        camefrom = self.request.get('camefrom', None)
+        camefrom = self.request.get("camefrom", None)
         if not camefrom:
             if ILocation.providedBy(principal):
                 camefrom = absoluteURL(principal, self.request)

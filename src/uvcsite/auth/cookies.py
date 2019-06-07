@@ -17,14 +17,16 @@ from zope.publisher.interfaces.http import IHTTPRequest
 class ICookieCredentials(Interface):
     """A Credentials Plugin based on cookies.
     """
+
     cookie_name = ASCIILine(
-        title=_(u'Cookie name'),
-        description=_(u'Name of the cookie for storing credentials.'),
-        required=True)
+        title=_(u"Cookie name"),
+        description=_(u"Name of the cookie for storing credentials."),
+        required=True,
+    )
 
 
 class CookiesCredentials(grok.GlobalUtility, SessionCredentialsPlugin):
-    grok.name('cookies')
+    grok.name("cookies")
     grok.provides(ICredentialsPlugin)
     grok.implements(ICredentialsPlugin, ICookieCredentials)
 
@@ -32,18 +34,18 @@ class CookiesCredentials(grok.GlobalUtility, SessionCredentialsPlugin):
     __parent__ = None
 
     # Required by zope.pluggableauth's IBrowserFormChallenger
-    loginpagename = u'login'
-    loginfield = u'login'
-    passwordfield = u'password'
+    loginpagename = u"login"
+    loginfield = u"login"
+    passwordfield = u"password"
 
     # Required by zope.pluggableauth's ICredentialsPlugin
     challengeProtocol = None
-    cookie_name = 'dolmen.authcookie'
+    cookie_name = "dolmen.authcookie"
 
     @staticmethod
     def make_cookie(login, password):
-        credstr = u'%s:%s' % (login, password)
-        val = base64.encodestring(credstr.encode('utf-8'))
+        credstr = u"%s:%s" % (login, password)
+        val = base64.encodestring(credstr.encode("utf-8"))
         return urllib.parse.quote(val)
 
     def extractCredentials(self, request):
@@ -56,16 +58,16 @@ class CookiesCredentials(grok.GlobalUtility, SessionCredentialsPlugin):
 
         if login and password:
             cookie = self.make_cookie(login, password)
-            request.response.setCookie(self.cookie_name, cookie, path='/')
+            request.response.setCookie(self.cookie_name, cookie, path="/")
         elif cookie:
-            val = base64.decodestring(urllib.parse.unquote(cookie).encode('utf-8'))
-            login, password = val.split(b':')
+            val = base64.decodestring(urllib.parse.unquote(cookie).encode("utf-8"))
+            login, password = val.split(b":")
         else:
             return
 
-        return {'login': login, 'password': password}
+        return {"login": login, "password": password}
 
     def logout(self, request):
         if not IHTTPRequest.providedBy(request):
             return
-        request.response.expireCookie(self.cookie_name, path='/')
+        request.response.expireCookie(self.cookie_name, path="/")

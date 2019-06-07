@@ -11,4 +11,9 @@
 
   <grok:grok package=".app" />
   <grok:grok package=".permissions" />
+
+  <include package="uvcsite" file="principals.zcml" />
+  <include package="zope.pluggableauth" />
+  <include package="zope.pluggableauth.plugins" file="groupfolder.zcml" />
+
 </configure>

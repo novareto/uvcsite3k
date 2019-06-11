@@ -48,7 +48,6 @@ class Login(Form):
         if errors:
             return FAILURE
         principal = self.request.principal
-        import pdb; pdb.set_trace()
         if IUnauthenticatedPrincipal.providedBy(principal):
             self.status = _("Login failed")
             return FAILURE

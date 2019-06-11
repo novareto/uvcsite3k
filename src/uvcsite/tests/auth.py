@@ -1,6 +1,7 @@
 """
     >>> from grokcore.component.testing import grok
     >>> grok('uvcsite.tests.fixtures.usermanagement')
+    >>> grok(__name__)
 
 
 Do a functional doctest test on the app.
@@ -39,7 +40,7 @@ Let's first create an instance of Uvcsite at the top level:
 
    >>> for plugin in auth.getAuthenticatorPlugins():
    ...     print(plugin)
-   ('principals', <uvcsite.auth.handler.UVCAuthenticator object at 0...>) 
+   ('principals', <uvcsite.auth.handler.UVCAuthenticator object at 0...>)
 
 
 Provide an simple Index View where we can demonstrate the login stuff
@@ -51,13 +52,15 @@ Only Authorzied people should get access
 
    >>> from zope.testbrowser.browser import Browser
    >>> browser = Browser(wsgi_app=layer.make_wsgi_app())
-   >>> browser.handleErrors = True 
+   >>> browser.handleErrors = True
 
 This means if we open the index page. We get redirected
 to the login page.
 
 
-   >>> browser.open('http://localhost/app/@@index')
+   >>> browser.open('http://localhost/app')
+   >>> print(browser.contents)
+
    >>> browser.url
    'http://localhost/app/@@login?camefrom=http%3A%2F%2Flocalhost%2Fapp%2Findex'
 
@@ -90,8 +93,9 @@ from zope.interface import Interface
 
 
 class IndexPage(grok.View):
-    grok.name('index')
+    grok.name("index")
     grok.context(Interface)
-   
+    grok.require('uvc.ViewContent')
+
     def render(self):
         return u"Hallo Welt"

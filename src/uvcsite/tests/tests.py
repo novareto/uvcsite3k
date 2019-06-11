@@ -18,17 +18,12 @@ browser_layer = uvcsite.testing.UVCSiteLayer(uvcsite.tests)
 def test_suite():
     suite = unittest.TestSuite()
     test = doctest.DocTestSuite(
-        'uvcsite.tests.auth',
+        "uvcsite.tests.auth",
         checker=renormalizing.RENormalizing(),
-        extraglobs={
-            "layer": browser_layer,
-            "__name__": "uvcsite.tests"
-        },
+        extraglobs={"layer": browser_layer},
         optionflags=(
-            doctest.ELLIPSIS+
-            doctest.NORMALIZE_WHITESPACE+
-            doctest.REPORT_NDIFF
-        )
+            doctest.ELLIPSIS + doctest.NORMALIZE_WHITESPACE + doctest.REPORT_NDIFF
+        ),
     )
     test.layer = browser_layer
     suite.addTest(test)

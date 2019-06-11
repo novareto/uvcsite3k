@@ -44,8 +44,8 @@ class ProductFolder(grok.Container):
 class Content(grok.Model):
     grok.baseclass()
 
-    schema = tuple()
-    
+    __schema__ = tuple()
+
     @property
     def meta_type(self):
         return self.__class__.__name__

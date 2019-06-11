@@ -24,6 +24,7 @@ class UVCSiteLayer(ZopeFanstaticBrowserLayer):
         return app
 
     def testTearDown(self):
+        super().testTearDown()
         setSite()
 
 

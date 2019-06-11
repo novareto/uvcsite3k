@@ -1,6 +1,3 @@
-#!/usr/bin/python
-# -*- coding: utf-8 -*-
-
 import zope.schema
 import zope.interface
 import grokcore.view as grok
@@ -20,30 +17,29 @@ class ILoginForm(zope.interface.Interface):
     """A simple login form interface.
     """
 
-    login = zope.schema.TextLine(title=_(u"Username"), required=True)
+    login = zope.schema.TextLine(title=_("Username"), required=True)
 
-    password = zope.schema.Password(title=_(u"Password"), required=True)
+    password = zope.schema.Password(title=_("Password"), required=True)
 
-    camefrom = zope.schema.TextLine(title=_(u"TextLine"), required=True)
+    camefrom = zope.schema.TextLine(title=_("TextLine"), required=True)
 
 
 class Login(Form):
     """A very basic implementation of a login form.
     """
-
-    grok.title(_(u"Log in"))
+    grok.title(_("Log in"))
     grok.require("zope.Public")
     grok.context(zope.interface.Interface)
 
     prefix = ""
-    label = _(u"Identify yourself")
-    form_name = _(u"Login form")
+    label = _("Identify yourself")
+    form_name = _("Login form")
 
     @property
     def fields(self):
         fields = Fields(ILoginForm)
         for field in fields:
-            field.prefix = u""
+            field.prefix = ""
         return fields
 
     @action(_("Log in"))
@@ -53,12 +49,13 @@ class Login(Form):
             return FAILURE
         principal = self.request.principal
         if IUnauthenticatedPrincipal.providedBy(principal):
-            self.status = _(u"Login failed")
+            self.status = _("Login failed")
             return FAILURE
 
         self.flash(
-            _("You are now logged in as ${name}", mapping={"name": principal.id})
-        )
+            _("You are now logged in as ${name}",
+              mapping={"name": principal.id}))
+
         #   notify(UserLoginEvent(principal))    # BBB
         camefrom = self.request.get("camefrom", None)
         if not camefrom:

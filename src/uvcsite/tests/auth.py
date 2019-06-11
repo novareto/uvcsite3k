@@ -42,7 +42,7 @@ Provide an simple Index View where we can demonstrate the login stuff
 
 
 
-Only Authorzied people should get access
+Only Authorized people should get access
 ----------------------------------------
 
    >>> from zope.testbrowser.browser import Browser

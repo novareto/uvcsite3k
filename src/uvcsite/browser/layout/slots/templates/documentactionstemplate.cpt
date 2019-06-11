@@ -1,9 +1,0 @@
-<div class="row">
-  <ul tal:attributes="id viewlet.id">
-    <li tal:repeat="menu viewlet.menus">
-      <a href="" tal:attributes="href menu.action">
-        <span src="" title="" alt="" tal:attributes="class menu.icon; title menu.title; alt menu.title" />
-      </a>
-    </li>
-  </ul>
-</div>

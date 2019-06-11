@@ -1,8 +1,0 @@
-<ul class="list-unstyled">
-  <li tal:repeat="viewlet viewletmanager.getMenuItems()">
-  <a href="" tal:attributes="href viewlet.action;">
-    <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
-    <span tal:content="viewlet.title"> </span>
-  </a>
-  </li>
-</ul>

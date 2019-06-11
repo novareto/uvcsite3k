@@ -70,7 +70,7 @@ Now we are at the Login Page
    >>> password.value = "passwort"
 
    >>> came_from = form.getControl(name='camefrom')
-   >>> came_from.value = 'http://localhost/app/index'
+   >>> came_from.value = 'http://localhost/app'
 
    >>> form.submit(name='action.log-in')
 
@@ -78,7 +78,7 @@ Now we are at the Login Page
    True
 
    >>> print(browser.url)
-   'http://localhost/app/index'
+   http://localhost/app
 """
 
 import grok
@@ -89,7 +89,7 @@ from zope.interface import Interface
 class IndexPage(grok.View):
     grok.name("index")
     grok.context(Interface)
-    grok.require(uvcsite.permissions.View)
+    grok.require('zope.View')
 
     def render(self):
         return "Hallo Welt"

@@ -1,6 +1,6 @@
 """
     >>> from grokcore.component.testing import grok
-    >>> grok('uvcsite.tests.fixtures.usermanagement')
+    >>> grok('uvcsite.browser.tests.fixtures.usermanagement')
     >>> grok(__name__)
 
 
@@ -13,10 +13,6 @@ Let's first create an instance of Uvcsite at the top level:
     >>> app
     <uvcsite.app.Uvcsite object at ...>
 
-    >>> from zope import component
-    >>> from uvcsite.extranetmembership.interfaces import IUserManagement
-    >>> component.getUtility(IUserManagement)
-    <uvcsite.tests.fixtures.usermanagement.UserManagement object at...>
 
    Let's look if we have our authenticate infrastucture
 ----------------------------------------------------

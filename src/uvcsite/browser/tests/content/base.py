@@ -1,13 +1,12 @@
 """
     >>> from grokcore.component.testing import grok
-    >>> grok('uvcsite.tests.fixtures.usermanagement')
+    >>> grok('uvcsite.browser.tests.fixtures.usermanagement')
     >>> grok(__name__)
 
     Do a unit doctest test on the base.py
     =====================================
 
     Let's first create an Object which inherits from Content:
-
 
     >>> import zope.security
     >>> import grok

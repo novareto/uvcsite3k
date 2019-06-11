@@ -22,7 +22,9 @@ def test_suite():
         checker=renormalizing.RENormalizing(),
         extraglobs={"layer": browser_layer},
         optionflags=(
-            doctest.ELLIPSIS + doctest.NORMALIZE_WHITESPACE + doctest.REPORT_NDIFF
+            doctest.ELLIPSIS +
+            doctest.NORMALIZE_WHITESPACE +
+            doctest.REPORT_NDIFF
         ),
     )
     test.layer = browser_layer

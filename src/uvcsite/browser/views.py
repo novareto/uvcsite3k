@@ -1,8 +1,12 @@
 import grok
-import uvcsite.browser
-import uvcsite.app
-import uvcsite.resource
+import uvcsite.permissions
+from zope.interface import Interface
 
 
+class IndexPage(grok.View):
+    grok.name("index")
+    grok.context(Interface)
+    grok.require(uvcsite.permissions.View)
 
-
+    def render(self):
+        return "Hallo Welt"

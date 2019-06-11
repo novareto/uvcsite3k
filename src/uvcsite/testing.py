@@ -2,6 +2,7 @@ import transaction
 import unittest
 import uvcsite.tests
 import uvcsite.app
+import grokcore.site.util
 
 from zope.component import provideUtility
 from zope.component.hooks import setSite
@@ -11,19 +12,19 @@ from zope.fanstatic.testing import ZopeFanstaticBrowserLayer
 
 class UVCSiteLayer(ZopeFanstaticBrowserLayer):
 
-    def testSetUp(self):
-        super().testSetUp()
+    def create_application(self, name):
         root = self.getRootFolder()
+        if name in root:
+            raise KeyError('Application already exists.')
         with transaction.manager:
-            app = root["app"] = uvcsite.app.Uvcsite()
+            grokcore.site.util.create_application(
+                uvcsite.app.Uvcsite, root, name)
+        app = root[name]
         setSite(app)
+        return app
 
     def testTearDown(self):
-        root = self.getRootFolder()
-        with transaction.manager:
-           del root["app"]
         setSite()
-        super().testTearDown()
 
 
 browser_layer = UVCSiteLayer(uvcsite.tests)

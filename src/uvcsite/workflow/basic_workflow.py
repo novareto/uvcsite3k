@@ -8,15 +8,10 @@ import uvcsite
 from uvcsite.content.interfaces import IContent
 from datetime import datetime
 
+import uvcsite.workflow
 from hurry.workflow import workflow
 from hurry.workflow.interfaces import (
     IWorkflow, IWorkflowState, IWorkflowInfo, IWorkflowTransitionEvent)
-
-
-CREATED = 0
-PUBLISHED = 1
-PROGRESS = 2
-REVIEW = 3
 
 
 def titleForState(state):
@@ -31,37 +26,37 @@ def create_workflow():
         transition_id='create',
         title='create',
         source=None,
-        destination=CREATED)
+        destination=uvcsite.workflow.State.CREATED)
 
     publish_transition = workflow.Transition(
         transition_id='publish',
         title='publish',
-        source=CREATED,
-        destination=PUBLISHED)
+        source=uvcsite.workflow.State.CREATED,
+        destination=uvcsite.workflow.State.PUBLISHED)
 
     progress_transition = workflow.Transition(
         transition_id='progress',
         title='progress',
-        source=CREATED,
-        destination=PROGRESS)
+        source=uvcsite.workflow.State.CREATED,
+        destination=uvcsite.workflow.State.PROGRESS)
 
     fix_transition = workflow.Transition(
         transition_id='fix',
         title='fix',
-        source=PROGRESS,
-        destination=PUBLISHED)
+        source=uvcsite.workflow.State.PROGRESS,
+        destination=uvcsite.workflow.State.PUBLISHED)
 
     review = workflow.Transition(
         transition_id='review',
         title='publish_to_review',
-        source=CREATED,
-        destination=REVIEW)
+        source=uvcsite.workflow.State.CREATED,
+        destination=uvcsite.workflow.State.REVIEW)
 
     review_to_publish = workflow.Transition(
         transition_id='review_to_publish',
         title='review to publish',
-        source=REVIEW,
-        destination=PUBLISHED)
+        source=uvcsite.workflow.State.REVIEW,
+        destination=uvcsite.workflow.State.PUBLISHED)
 
     return workflow.Workflow([create_transition,
                               progress_transition,

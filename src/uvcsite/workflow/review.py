@@ -1,12 +1,13 @@
 import grok
 import uvcsite.browser
+import uvcsite.workflow
+import uvcsite.permissions
 import uvcsite.interfaces
 import uvcsite.browser.layout.slots.interfaces
 
 from hurry.workflow.interfaces import IWorkflowState
 from megrok.z3ctable import table, Column
 from uvcsite.auth.interfaces import ICOUser
-from uvcsite.workflow.basic_workflow import REVIEW
 from zope import interface
 
 
@@ -34,7 +35,7 @@ class ReviewViewlet(grok.Viewlet):
                     if interaction.checkPermission(
                             'uvc.ViewContent', productfolder):
                         results = [x for x in productfolder.values()
-                                   if IWorkflowState(x).getState() == REVIEW]
+                                   if IWorkflowState(x).getState() == uvcsite.workflow.State.REVIEW]
         return results
 
     def render(self):
@@ -48,8 +49,10 @@ class ReviewViewlet(grok.Viewlet):
 
 class ReviewList(uvcsite.browser.TablePage):
     grok.name('review_list')
-    grok.require('uvc.EditContent')
+    grok.require(uvcsite.permissions.Edit)
     grok.baseclass()
+
+    check = uvcsite.permissions.named(uvcsite.permissions.View)
 
     @property
     def values(self):
@@ -59,10 +62,10 @@ class ReviewList(uvcsite.browser.TablePage):
             interaction = self.request.interaction
             for productfolder in homefolder.values():
                 if not productfolder.__name__.startswith('__'):
-                    if interaction.checkPermission(
-                            'uvc.ViewContent', productfolder):
+                    if interaction.checkPermission(self.check, productfolder):
                         results = [x for x in productfolder.values()
-                                   if IWorkflowState(x).getState() == REVIEW]
+                                   if IWorkflowState(x).getState() == \
+                                          uvcsite.workflow.State.REVIEW]
         return results
 
 

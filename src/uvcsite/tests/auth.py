@@ -9,15 +9,10 @@ Do a functional doctest test on the app.
 
 Let's first create an instance of Uvcsite at the top level:
 
+    >>> app = layer.create_application('app')
+    >>> app
+    <uvcsite.app.Uvcsite object at ...>
 
-
-    >>> from uvcsite.app import Uvcsite
-    >>> from zope.component.hooks import setSite
-    >>> root = layer.getRootFolder()
-    >>> root['app']
-    <uvcsite.app.Uvcsite object at 0...>
-
-    >>> setSite(root['app'])
     >>> from zope import component
     >>> from uvcsite.extranetmembership.interfaces import IUserManagement
     >>> component.getUtility(IUserManagement)
@@ -59,10 +54,8 @@ to the login page.
 
 
    >>> browser.open('http://localhost/app')
-   >>> print(browser.contents)
-
    >>> browser.url
-   'http://localhost/app/@@login?camefrom=http%3A%2F%2Flocalhost%2Fapp%2Findex'
+   'http://localhost/app/@@login?camefrom=http%3A%2F%2Flocalhost%2Fapp%2F%40%40index'
 
    >>> 'dolmen.authcookie' in browser.cookies
    False
@@ -89,13 +82,14 @@ Now we are at the Login Page
 """
 
 import grok
+import uvcsite.permissions
 from zope.interface import Interface
 
 
 class IndexPage(grok.View):
     grok.name("index")
     grok.context(Interface)
-    grok.require('uvc.ViewContent')
+    grok.require(uvcsite.permissions.View)
 
     def render(self):
-        return u"Hallo Welt"
+        return "Hallo Welt"

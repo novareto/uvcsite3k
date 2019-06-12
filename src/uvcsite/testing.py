@@ -6,6 +6,7 @@ import unittest
 import uvcsite.app
 import uvcsite.testing
 
+import zope.testbrowser.wsgi
 from zope.testing import renormalizing
 from zope.component import provideUtility
 from zope.component.hooks import setSite
@@ -31,6 +32,10 @@ class UVCSiteLayer(ZopeFanstaticBrowserLayer):
         setSite(app)
         return app
 
+    def new_browser(self, url):
+        return zope.testbrowser.wsgi.Browser(
+            url, wsgi_app=self.make_wsgi_app())
+
     def testTearDown(self):
         super().testTearDown()
         setSite()
@@ -44,10 +49,6 @@ def suiteFromPackage(folder, module_name, layer=None):
     suite = unittest.TestSuite()
     checker = renormalizing.RENormalizing()
 
-    globs = {
-        "layer": layer
-    }
-
     optionflags = (
         doctest.IGNORE_EXCEPTION_DETAIL +
         doctest.ELLIPSIS +
@@ -55,27 +56,35 @@ def suiteFromPackage(folder, module_name, layer=None):
         doctest.REPORT_NDIFF
         )
 
-    for subfolder in (f for f in os.scandir(folder)
-                      if f.is_dir() and f.name not in IGNORE):
+    for subfolder in os.scandir(folder):
+        if not subfolder.is_dir() or subfolder.name in IGNORE:
+            continue
 
-
-        for content in (f for f in os.scandir(subfolder.path) if f.is_file()):
-            if content.name == '__init__.py':
+        for f in os.scandir(subfolder.path):
+            if not f.is_file():
+                continue
+            if f.name == '__init__.py':
                 continue
 
             test = None
-            if content.name.endswith('.py'):
-                dottedname = f"{module_name}.{subfolder.name}.{content.name[:-3]}"
+            if f.name.endswith('.py'):
+                dottedname = f"{module_name}.{subfolder.name}.{f.name[:-3]}"
                 test = doctest.DocTestSuite(
                     dottedname,
                     checker=checker,
-                    extraglobs=globs,
+                    extraglobs={
+                        "layer": layer,
+                        "dottedname": dottedname
+                    },
                     optionflags=optionflags)
-            elif content.name.endswith('.txt'):
+            elif f.name.endswith('.txt'):
                 test = doctest.DocFileSuite(
-                    content.path,
+                    f.path,
                     optionflags=optionflags,
-                    globs=globs)
+                    globs={
+                        "layer": layer,
+                        "filename": f.path
+                    })
 
             if test is not None:
                 if layer is not None:

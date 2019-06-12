@@ -29,7 +29,8 @@ class ProductFolderGrokker(martian.ClassGrokker):
             discriminator=(
                 'utility', uvcsite.content.interfaces.IProductFolder, name),
             callable=zope.component.zcml.handler,
-            args=('registerUtility', factory, IProductFolder, name),
+            args=('registerUtility', factory,
+                  uvcsite.content.interfaces.IProductFolder, name),
             )
 
         return True

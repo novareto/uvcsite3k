@@ -12,6 +12,7 @@ First start with an instance of UAZFolder
   >>> grok.grok(dottedname)
 
   >>> root = layer.getRootFolder()
+  >>> app = layer.create_application('app')
 
   >>> folder = UAZFolder()
   >>> folder
@@ -19,8 +20,8 @@ First start with an instance of UAZFolder
 
 Add the folder to the RootFolder!
 
-  >>> root['uaz'] = folder
-  >>> root['uaz']
+  >>> app['uaz'] = folder
+  >>> app['uaz']
   <...api_json.UAZFolder object at ...>
 
 Rest Operations
@@ -40,9 +41,10 @@ GET
 So start with a GET Request of the Container! Ok are no
 content objects in it so we only get an empty container listing.
 
-  >>> browser = layer.new_browser('http://localhost/')
+  >>> browser = layer.new_browser('http://localhost/app')
+  >>> browser.handleErrors = True 
   >>> browser.addHeader('Authorization', auth_header)
-  >>> response = browser.open("http://localhost/++rest++jsonapi/uaz")
+  >>> response = browser.open("http://localhost/++rest++jsonapi/app/uaz")
 
   >>> import json
   >>> json.dumps(json.loads(browser.contents), indent=4, sort_keys=True)

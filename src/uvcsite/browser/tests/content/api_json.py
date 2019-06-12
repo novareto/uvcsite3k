@@ -42,12 +42,12 @@ So start with a GET Request of the Container! Ok are no
 content objects in it so we only get an empty container listing.
 
   >>> browser = layer.new_browser('http://localhost/app')
-  >>> browser.handleErrors = True 
+  >>> browser.handleErrors = False 
   >>> browser.addHeader('Authorization', auth_header)
   >>> response = browser.open("http://localhost/++rest++jsonapi/app/uaz")
 
   >>> import json
-  >>> json.dumps(json.loads(browser.contents), indent=4, sort_keys=True)
+  >>> print(json.dumps(json.loads(browser.contents), indent=4, sort_keys=True))
   {
       "id": "uaz",
       "items": []
@@ -55,29 +55,27 @@ content objects in it so we only get an empty container listing.
 
 Now let's add objects to the container and see the GET Request again
 
-  >>> from uvcsite.tests.functional.content.api_json import Unfallanzeige
   >>> uaz = Unfallanzeige()
-  >>> uaz.title = u"Mein Unfall"
-  >>> uaz.name = u"Christian Klinger"
+  >>> uaz.title = "Mein Unfall"
+  >>> uaz.name = "Christian Klinger"
   >>> uaz.age = 29
 
   >>> uaz1 = Unfallanzeige()
-  >>> uaz1.title = u"Unfall von Lars"
-  >>> uaz1.name = u"Lars Walther"
+  >>> uaz1.title = "Unfall von Lars"
+  >>> uaz1.name = "Lars Walther"
   >>> uaz1.age = 39
 
 One item in the container!
 
-  >>> root['uaz']['christian'] = uaz
-  >>> response = http_call(wsgi_app(), 'GET', 'http://localhost/++rest++jsonapi/uaz',
-  ... AUTHORIZATION=auth_header)
-  >>> print format(response)
+  >>> app['uaz']['christian'] = uaz
+  >>> response = browser.open("http://localhost/++rest++jsonapi/app/uaz")
+  >>> print(json.dumps(json.loads(browser.contents), indent=4, sort_keys=True))
   {
       "id": "uaz",
       "items": [
           {
               "@url": "http://www.google.de",
-              "author": "uvc.uaz",
+              "author": "0101010001",
               "datum": "...",
               "id": "christian",
               "meta_type": "Unfallanzeige",
@@ -90,9 +88,9 @@ One item in the container!
 
 The object itself has also a get method
 
-  >>> response = http_call(wsgi_app(), 'GET', 'http://localhost/++rest++jsonapi/uaz/christian',
-  ... AUTHORIZATION=auth_header)
-  >>> print format(response)
+  >>> response = browser.open(
+  ...     "http://localhost/++rest++jsonapi/app/uaz/christian")
+  >>> print(json.dumps(json.loads(browser.contents), indent=4, sort_keys=True))
   {
       "age": 29,
       "name": "Christian Klinger",
@@ -102,15 +100,14 @@ The object itself has also a get method
 More items in the container!
 
   >>> root['uaz']['lars'] = uaz1
-  >>> response = http_call(wsgi_app(), 'GET', 'http://localhost/++rest++jsonapi/uaz',
-  ... AUTHORIZATION=auth_header)
-  >>> print format(response)
+  >>> response = browser.open("http://localhost/++rest++jsonapi/app/uaz")
+  >>> print(json.dumps(json.loads(browser.contents), indent=4, sort_keys=True))
   {
       "id": "uaz", 
       "items": [
           {
               "@url": "http://www.google.de", 
-              "author": "uvc.uaz", 
+              "author": "0101010001", 
               "datum": "...", 
               "id": "christian", 
               "meta_type": "Unfallanzeige", 
@@ -119,7 +116,7 @@ More items in the container!
           },
           {
               "@url": "http://www.google.de", 
-              "author": "uvc.uaz", 
+              "author": "0101010001", 
               "datum": "...", 
               "id": "lars", 
               "meta_type": "Unfallanzeige", 
@@ -128,7 +125,6 @@ More items in the container!
           }
       ]
   }
-
 
 
 PUT
@@ -213,8 +209,8 @@ from zope.interface import Invalid, invariant
 
 
 class IUnfallanzeige(uvcsite.content.interfaces.IContent):
-    name = TextLine(title = u"Name", max_length=20)
-    age = Int(title = u"Int")
+    name = TextLine(title="Name", max_length=20)
+    age = Int(title="Int")
 
     @invariant
     def no_sample(unfallanzeige):

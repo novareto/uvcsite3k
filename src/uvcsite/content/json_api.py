@@ -44,7 +44,7 @@ class ProductFolderRest(grok.REST):
     def PUT(self):
         errors = []
         content = self.context.getContentType()()
-        interface = content.schema[0]
+        interface = content.__schema__[0]
         serializer = IJSONSerializer(content)
         serializer.work(self.body, interface, errors)
         if not errors:
@@ -66,7 +66,7 @@ class ContentRest(grok.REST):
 
     def GET(self):
         context = self.context
-        schema = context.schema[0]
+        schema = context.__schema__[0]
         return serialize(schema, context)
 
 

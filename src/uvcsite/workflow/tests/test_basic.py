@@ -5,7 +5,7 @@ import uvcsite.workflow
 
 
 class Person(uvcsite.content.components.Content):
-    pass
+    state = uvcsite.workflow.State()
 
 
 class TestWorkflowValues(unittest.TestCase):
@@ -51,18 +51,12 @@ class TestApplicationWorkflow(unittest.TestCase):
             wu.getTransitionById('noexist')
 
     def test_initial_content_state(self):
-        from hurry.workflow.interfaces import IWorkflowState
-        wf = IWorkflowState(self.klaus)
-        self.assertEqual(wf.getState(), 0)
+        self.assertEqual(self.klaus.state, 0)
 
     def test_content_publication(self):
-        from hurry.workflow.interfaces import IWorkflowState, IWorkflowInfo
-
-        #self.assertIsNone(self.klaus.published)
-        wf = IWorkflowState(self.klaus)
-        IWorkflowInfo(self.klaus).fireTransition('publish')
-        self.assertEqual(wf.getState(), 1)
-        #self.assertIsNotNone(self.klaus.published)
+        from uvcsite.workflow.basic_workflow import Workflow
+        self.klaus.state = Workflow.State.PUBLISHED
+        self.assertEqual(self.klaus.state, 1)
 
     def test_content_progress_then_fix(self):
         from hurry.workflow.interfaces import IWorkflowState, IWorkflowInfo

@@ -5,7 +5,6 @@ import uvcsite.content.interfaces
 from hurry.workflow.interfaces import IWorkflowState
 from lxml import etree
 from lxml.builder import E
-from uvcsite.workflow.basic_workflow import titleForState
 from zope.interface import Invalid, Interface, implementer
 
 

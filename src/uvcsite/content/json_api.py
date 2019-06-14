@@ -3,7 +3,6 @@ import grok
 import uvcsite.content.interfaces
 
 from hurry.workflow.interfaces import IWorkflowState
-from uvcsite.workflow.basic_workflow import titleForState
 from zope.interface import Invalid, Interface, implementer
 
 

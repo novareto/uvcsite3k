@@ -1,108 +1,69 @@
-# -*- coding: utf-8 -*-
-# Copyright (c) 2007-2008 NovaReto GmbH
-# cklinger@novareto.de
-
+import enum
 import grok
-import uvcsite
-
-from uvcsite.content.interfaces import IContent
-from datetime import datetime
-
-import uvcsite.workflow
-from hurry.workflow import workflow
-from hurry.workflow.interfaces import (
-    IWorkflow, IWorkflowState, IWorkflowInfo, IWorkflowTransitionEvent)
+import hurry.workflow.workflow
+import hurry.workflow.interfaces
 
 
-def titleForState(state):
-    """ Reverse Mapping of workflow States """
-    mapping = {0: 'Entwurf', 1: 'gesendet', 2: 'in Verarbeitung', 3: 'Review'}
-    return mapping.get(state, 'unbekannt')
+class Workflow(hurry.workflow.workflow.Workflow):
+
+    STATES_NAMES = {
+        0: 'Entwurf',
+        1: 'gesendet',
+        2: 'in Verarbeitung',
+        3: 'Review'
+    }
+
+    class State(enum.IntEnum):
+        CREATED = 0
+        PUBLISHED = 1
+        PROGRESS = 2
+        REVIEW = 3
+
+        @property
+        def title(self):
+            return STATES_NAMES[self.value]
+
+    @classmethod
+    def create(cls):
+        return cls([
+            hurry.workflow.workflow.Transition(
+                transition_id='create',
+                title='create',
+                source=None,
+                destination=cls.State.CREATED),
+
+            hurry.workflow.workflow.Transition(
+                transition_id='publish',
+                title='publish',
+                source=cls.State.CREATED,
+                destination=cls.State.PUBLISHED),
+            
+            hurry.workflow.workflow.Transition(
+                transition_id='progress',
+                title='progress',
+                source=cls.State.CREATED,
+                destination=cls.State.PROGRESS),
+            
+            hurry.workflow.workflow.Transition(
+                transition_id='fix',
+                title='fix',
+                source=cls.State.PROGRESS,
+                destination=cls.State.PUBLISHED),
+            
+            hurry.workflow.workflow.Transition(
+                transition_id='review',
+                title='publish_to_review',
+                source=cls.State.CREATED,
+                destination=cls.State.REVIEW),
+            
+            hurry.workflow.workflow.Transition(
+                transition_id='review_to_publish',
+                title='review to publish',
+                source=cls.State.REVIEW,
+                destination=cls.State.PUBLISHED)])
 
 
-def create_workflow():
-    """ Basic Setup For Workflow Utility"""
-    create_transition = workflow.Transition(
-        transition_id='create',
-        title='create',
-        source=None,
-        destination=uvcsite.workflow.State.CREATED)
-
-    publish_transition = workflow.Transition(
-        transition_id='publish',
-        title='publish',
-        source=uvcsite.workflow.State.CREATED,
-        destination=uvcsite.workflow.State.PUBLISHED)
-
-    progress_transition = workflow.Transition(
-        transition_id='progress',
-        title='progress',
-        source=uvcsite.workflow.State.CREATED,
-        destination=uvcsite.workflow.State.PROGRESS)
-
-    fix_transition = workflow.Transition(
-        transition_id='fix',
-        title='fix',
-        source=uvcsite.workflow.State.PROGRESS,
-        destination=uvcsite.workflow.State.PUBLISHED)
-
-    review = workflow.Transition(
-        transition_id='review',
-        title='publish_to_review',
-        source=uvcsite.workflow.State.CREATED,
-        destination=uvcsite.workflow.State.REVIEW)
-
-    review_to_publish = workflow.Transition(
-        transition_id='review_to_publish',
-        title='review to publish',
-        source=uvcsite.workflow.State.REVIEW,
-        destination=uvcsite.workflow.State.PUBLISHED)
-
-    return workflow.Workflow([create_transition,
-                              progress_transition,
-                              fix_transition,
-                              review,
-                              review_to_publish,
-                              publish_transition])
-
-grok.global_utility(create_workflow, provides=IWorkflow)
-
-
-# Workflow States
-
-class WorkflowState(workflow.WorkflowState, grok.Adapter):
-    grok.context(IContent)
-    grok.provides(IWorkflowState)
-
-
-# Workflow Info
-
-class WorkflowInfo(workflow.WorkflowInfo, grok.Adapter):
-    grok.context(IContent)
-    grok.provides(IWorkflowInfo)
-
-
-# Events
-
-@grok.subscribe(IContent, grok.IObjectAddedEvent)
-def initializeWorkflow(content, event):
-    IWorkflowInfo(content).fireTransition('create')
-
-
-@grok.subscribe(IWorkflowTransitionEvent)
-def set_publish_action(event):
-    event.object.published = datetime.now()
-
-
-# @grok.subscribe(IWorkflowTransitionEvent)
-def change_permissions(event):
-    if event.destination == PUBLISHED:
-        obj = event.object
-        principal = obj.principal
-        from uvcsite.auth.interfaces import ICOUser
-        from zope.securitypolicy import interfaces
-        if not ICOUser.providedBy(uvcsite.getPrincipal()):
-            prinper = interfaces.IPrincipalPermissionManager(obj)
-            roleper = interfaces.IRolePermissionManager(obj)
-            roleper.denyPermissionToRole('uvc.ViewContent', 'uvc.Editor')
-            prinper.grantPermissionToPrincipal('uvc.ViewContent', principal.id)
+grok.global_utility(
+    Workflow.create(),
+    provides=hurry.workflow.interfaces.IWorkflow,
+    direct=True)

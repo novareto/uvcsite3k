@@ -1,6 +1,5 @@
 import grok
-import uvcsite.workflow
-
+from uvcsite.workflow.basic_workflow import Workflow
 from zope.securitypolicy.interfaces import IRolePermissionManager
 from hurry.workflow.interfaces import IWorkflowTransitionEvent
 
@@ -50,7 +49,7 @@ def named(component):
     
 @grok.subscribe(IWorkflowTransitionEvent)
 def remove_edit_permission(event):
-    if event.destination != uvcsite.workflow.State.PUBLISHED:
+    if event.destination != Workflow.State.PUBLISHED:
         return
     IRolePermissionManager(event.object).denyPermissionToRole(
            named(Edit), named(Editor))

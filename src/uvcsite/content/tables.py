@@ -9,7 +9,6 @@ from megrok.z3ctable import (
 
 from hurry.workflow.interfaces import IWorkflowState
 from zope.dublincore.interfaces import IZopeDublinCore
-from uvcsite.workflow.basic_workflow import titleForState
 from zope.traversing.browser import absoluteURL
 
 

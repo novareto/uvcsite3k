@@ -4,7 +4,6 @@ import zope.interface
 import zope.component.interfaces
 
 from uvcsite.auth.interfaces import ICOUser
-from uvcsite.content.folderinit import createProductFolders
 from uvcsite.extranetmembership.interfaces import IUserManagement
 from uvcsite.interfaces import IHomeFolder
 from zope.component import getUtility
@@ -23,8 +22,7 @@ class UserLoggedInEvent(zope.component.interfaces.ObjectEvent):
 @grok.subscribe(IUserLoggedInEvent)
 def applyPermissionsForExistentCoUsers(factory):
     principal = factory.object
-    createProductFolders(principal)
-    homefolder = IHomeFolder(principal).homeFolder
+    homefolder = IHomeFolder(principal)
     if not homefolder:
         return
     um = getUtility(IUserManagement)

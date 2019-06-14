@@ -3,6 +3,7 @@ import uvcsite.content.components
 import uvcsite.interfaces
 import uvcsite.testing
 import uvcsite.homefolder.homefolder
+import zope.securitypolicy.settings
 
 
 class TestHomefolder(unittest.TestCase):
@@ -30,3 +31,20 @@ class TestHomefolder(unittest.TestCase):
         utility = uvcsite.interfaces.IHomeFolderManager(self.app)
         with self.assertRaises(KeyError):
             utility['lars']
+
+        self.assertIsNone(utility.get('lars'))
+
+        homefolder = utility.create('lars')
+        self.assertTrue(utility['lars'] is homefolder)
+        self.assertTrue(utility.get('lars') is homefolder)
+
+    def test_homefolder_creation_roles(self):
+        from zope.securitypolicy.interfaces import IPrincipalRoleManager
+        
+        utility = uvcsite.interfaces.IHomeFolderManager(self.app)
+        homefolder = utility.create('lars')
+
+        prm = IPrincipalRoleManager(homefolder)
+        for role, setting in prm.getRolesForPrincipal('lars'):
+            self.assertTrue(role in utility.owner_roles)
+            self.assertEqual(setting, zope.securitypolicy.settings.Allow)

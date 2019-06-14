@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 from BTrees.OOBTree import OOBTree
 from persistent import Persistent
 
@@ -57,8 +55,6 @@ class PortalMembership(grok.Adapter):
     def __getitem__(self, uid):
         if uid in self.container:
             return self.container[uid]
-        if uid not in self.container:
-            return self.create(uid)
         raise KeyError('Unknown homefolder.')
 
     def get(self, uid, default=None):

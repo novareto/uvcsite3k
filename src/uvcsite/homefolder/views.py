@@ -6,7 +6,7 @@ from grokcore.rest.interfaces import IRESTLayer
 from megrok.pagetemplate import PageTemplate
 from megrok.z3ctable import Values
 from uvcsite import uvcsiteMF as _
-from uvcsite.content.productregistration import getAllProductRegistrations
+from uvcsite.content.productregistration import get_product_registrations
 from uvcsite.homefolder.homefolder import Members
 from uvcsite.interfaces import IHomeFolder
 from zope.component import getMultiAdapter
@@ -85,12 +85,12 @@ class DirectAccessViewlet(grok.Viewlet):
     def getContentTypes(self):
         interaction = self.request.interaction
         hf = uvcsite.getHomeFolder(self.request)
-        for key, value in getAllProductRegistrations():
-            if getattr(value, 'inNav', True):
-                pf = hf[value.folderURI]
-                if interaction.checkPermission('uvc.ViewContent', pf):
-                    yield dict(href=absoluteURL(pf, self.request),
-                               name=value.title)
+        for value in get_product_registrations(
+                self.request.principal, discard_unavailable=True):
+            pf = hf[value.key]
+            if interaction.checkPermission('uvc.ViewContent', pf):
+                yield dict(href=absoluteURL(pf, self.request),
+                           name=value.title)
 
     def render(self):
         template = getMultiAdapter((self, self.request), IPageTemplate)

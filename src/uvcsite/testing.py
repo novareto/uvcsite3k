@@ -3,6 +3,7 @@ import doctest
 import grokcore.site.util
 import transaction
 import unittest
+import uvcsite
 import uvcsite.app
 import uvcsite.testing
 
@@ -19,7 +20,7 @@ IGNORE = {
 }
 
 
-class UVCSiteLayer(ZopeFanstaticBrowserLayer):
+class AppLayer(ZopeFanstaticBrowserLayer):
 
     def create_application(self, name):
         root = self.getRootFolder()
@@ -32,16 +33,20 @@ class UVCSiteLayer(ZopeFanstaticBrowserLayer):
         setSite(app)
         return app
 
-    def new_browser(self, url):
-        return zope.testbrowser.wsgi.Browser(
-            url, wsgi_app=self.make_wsgi_app())
-
     def testTearDown(self):
         super().testTearDown()
         setSite()
 
 
-browser_layer = UVCSiteLayer(uvcsite.browser.tests)
+class BrowserLayer(AppLayer):
+
+    def new_browser(self, url):
+        return zope.testbrowser.wsgi.Browser(
+            url, wsgi_app=self.make_wsgi_app())
+
+
+application_layer = AppLayer(uvcsite)
+browser_layer = BrowserLayer(uvcsite)
 
 
 def suiteFromPackage(folder, module_name, layer=None):

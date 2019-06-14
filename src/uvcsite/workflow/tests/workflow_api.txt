@@ -1,0 +1,66 @@
+Workflow
+========
+
+:Test-Layer: functional
+
+Check the initialization of the workflow
+----------------------------------------
+
+Let's first create an instance of Uvcsite at the top level:
+
+  >>> from uvcsite.app import Uvcsite
+  >>> zodb_root = getRootFolder()
+  >>> root = zodb_root['app'] = Uvcsite()
+  >>> root
+  <uvcsite.app.Uvcsite object at ...>
+
+  >>> from zope.component.hooks import setSite
+  >>> setSite(root)
+
+  >>> from uvcsite.examples.simpleaddon import Contact, AdressBook
+  >>> adr_buch = AdressBook()
+  >>> root['adr'] = adr_buch
+  >>> adr_buch['christian'] = christian = Contact(name=u"Christian", alter=u"2")
+  >>> adr_buch['lars'] = lars = Contact(name=u"Lars", alter=u"2")
+  >>> adr_buch
+  <uvcsite.examples.simpleaddon.AdressBook object at ...>
+
+  >>> len(adr_buch)
+  2 
+
+  >>> from hurry.workflow.interfaces import IWorkflowState
+  >>> state = IWorkflowState(christian)
+  >>> state.getState()
+  0
+
+  >>> state = IWorkflowState(lars)
+  >>> state.getState()
+  0
+
+XML-RPC API
+First we try to access the 'View' RPC Object
+
+  >>> from zope.app.wsgi.testlayer import XMLRPCServerProxy                     
+  >>> server = XMLRPCServerProxy(
+  ...     "http://localhost/app/adr/", transport=transport)
+  >>> server.handleErrors = True 
+  >>> server.christian.publish() 
+
+  >>> server.christian.state()
+  1
+
+  >>> server.christian.publish()
+  Traceback (most recent call last):
+  ...
+  ProtocolError: <ProtocolError for localhost/app/adr/: 500 500 Internal Server Error>
+  
+
+  >>> server.lars.progress()
+
+  >>> server.lars.state()
+  2
+
+  >>> server.lars.fix()
+
+  >>> server.lars.state()
+  1

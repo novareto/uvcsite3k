@@ -1,0 +1,101 @@
+Do a functional doctest test on the app.
+========================================
+
+:Test-Layer: functional
+
+Let's first create an instance of of our Application at the top level:
+
+   >>> from uvcsite.app import Uvcsite 
+   >>> uvcsite = Uvcsite()
+   >>> root = getRootFolder()
+   >>> root['app'] = uvcsite 
+
+Let´s set the Site this is a hack because traversal set´s the site
+
+   >>> from zope.component import getUtility
+   >>> from zope.site.hooks import getSite, setSite
+   >>> setSite(uvcsite)
+
+Check the HomeFolderBase which should be the Members Container
+
+   >>> from uvcsite.homefolder.homefolder import Members
+   >>> root['app'].has_key('members')
+   True
+
+Do we get the correct object ?
+
+   >>> root['app']['members']
+   <uvcsite.homefolder.homefolder.Members object at ...>
+   
+
+Do we get a utility with our IHomeFolderManager
+
+   >>> from uvcsite.interfaces import IHomeFolderManager
+   >>> utility = getUtility(IHomeFolderManager)
+   >>> utility
+   <uvcsite.homefolder.homefolder.PortalMembership object at ...>
+
+
+Look at the constants of the PortalMembership
+---------------------------------------------
+
+Auto Assignment?
+
+   >>> utility.autoCreateAssignment
+   True
+
+homeFolderRole?
+
+   >>> utility.homeFolderRole
+   [u'uvc.User', u'uvc.Editor', u'uvc.MasterUser']
+
+containerObject?
+
+   >>> print utility.containerObject
+   uvcsite.homefolder.homefolder.HomeFolder
+
+Is the MembersContainer the one we specified?
+
+   >>> utility.homeFolderBase
+   <uvcsite.homefolder.homefolder.Members object at ...>
+   >>> root['app']['members']
+   <uvcsite.homefolder.homefolder.Members object at ...>
+
+   >>> utility.homeFolderBase is root['app']['members']
+   True
+
+Try to add the user lars. this should work because autoassigment is true
+
+   >>> from uvcsite.tests import startInteraction, endInteraction
+   >>> request = startInteraction('lars')
+
+   >>> utility.assignHomeFolder('lars')
+   >>> 'lars' in utility.homeFolderBase
+   True
+
+Do we get the HomeFolder thourgh the api
+
+   >>> homefolder = utility.getHomeFolder('lars')
+   >>> homefolder
+   <uvcsite.homefolder.homefolder.HomeFolder object at ...>
+
+Is this the right HomeFolder?
+
+   >>> from uvcsite.interfaces import IMyHomeFolder
+   >>> from uvcsite.homefolder.homefolder import HomeFolder
+   >>> hf = HomeFolder()
+   >>> IMyHomeFolder.providedBy(hf)
+   True
+
+   >>> IMyHomeFolder.providedBy(homefolder)
+   True
+
+OK now we have our homefolder. this homefolder should now have it´s own
+PrincipalRoleMap with settings for lars
+
+   >>> from zope.securitypolicy.interfaces import IPrincipalRoleMap
+   >>> rolemap = IPrincipalRoleMap(homefolder) 
+   >>> rolemap.getPrincipalsAndRoles()
+   [(u'uvc.MasterUser', u'lars', PermissionSetting: Allow), (u'uvc.Editor', u'lars', PermissionSetting: Allow), (u'uvc.User', u'lars', PermissionSetting: Allow)] 
+
+   >>> endInteraction()

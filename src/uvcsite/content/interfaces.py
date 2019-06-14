@@ -18,8 +18,9 @@ class IProductFolder(IContainer):
 
 class IContent(Interface):
 
+    state = Attribute('Workflow status.')
     schema = Attribute('Iterable of interfaces representing the schema')
-    
+
     title = TextLine(
         title=u"Titel",
         description=(

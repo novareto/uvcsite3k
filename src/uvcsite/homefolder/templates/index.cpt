@@ -1,0 +1,11 @@
+<div id="homefolder">
+  <h1 tal:content="view.title"></h1>
+  <p class="description" tal:content="view.description"> </p>
+  <div class="page-content">
+    <div class="batch pagination" tal:content="structure view.renderBatch()"> </div>
+    <form action="." method="post" tal:attributes="action view.url(context)">
+      <div tal:replace="structure view.renderTable()"> </div>
+      <input class="btn btn-primary" type="submit" value="Entfernen" name="form.button.delete" />
+    </form>
+  </div>
+</div>

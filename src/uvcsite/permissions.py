@@ -1,7 +1,6 @@
 import grok
-from uvcsite.workflow.basic_workflow import Workflow
+from uvcsite.workflow.workflow import Workflow
 from zope.securitypolicy.interfaces import IRolePermissionManager
-from hurry.workflow.interfaces import IWorkflowTransitionEvent
 
 
 class View(grok.Permission):
@@ -41,15 +40,3 @@ class Editor(grok.Role):
         Add,
         Edit,
         AccessHomeFolder)
-
-
-def named(component):
-    return grok.name.bind().get(component)
-
-    
-@grok.subscribe(IWorkflowTransitionEvent)
-def remove_edit_permission(event):
-    if event.destination != Workflow.State.PUBLISHED:
-        return
-    IRolePermissionManager(event.object).denyPermissionToRole(
-           named(Edit), named(Editor))

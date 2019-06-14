@@ -1,5 +1,7 @@
 import grok
 import uvcsite.content.interfaces
+import uvcsite.workflow
+import uvcsite.content.fields
 
 from grokcore.component import directive
 from uvcsite.content.directive import contenttype
@@ -12,7 +14,7 @@ from zope.pluggableauth.factories import Principal
 
 @implementer(uvcsite.content.interfaces.IProductFolder)
 class ProductFolder(grok.Container):
-
+    
     @property
     def name(self):
         return directive.name.bind().get(self)
@@ -44,7 +46,20 @@ class ProductFolder(grok.Container):
 class Content(grok.Model):
     grok.baseclass()
 
-    __schema__ = tuple()
+    state = uvcsite.workflow.State()
+    schema = tuple()
+
+    def __init__(self, **kwargs):
+        super().__init__()
+        if self.schema:
+            ifields = uvcsite.content.fields.Fields(*self.schema)
+            for key, value in kwargs.items():
+                ifield = ifields.get(key)
+                if ifield is None:
+                    continue
+                field = ifield.bind(inst)
+                field.validate(value)
+                field.set(inst, value)
 
     @property
     def meta_type(self):

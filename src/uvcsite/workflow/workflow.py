@@ -4,16 +4,7 @@ import hurry.workflow.workflow
 import hurry.workflow.interfaces
 
 
-class Workflow(hurry.workflow.workflow.Workflow):
-
-    STATES_NAMES = {
-        0: 'Entwurf',
-        1: 'gesendet',
-        2: 'in Verarbeitung',
-        3: 'Review'
-    }
-
-    class State(enum.IntEnum):
+class State(enum.IntEnum):
         CREATED = 0
         PUBLISHED = 1
         PROGRESS = 2
@@ -23,6 +14,19 @@ class Workflow(hurry.workflow.workflow.Workflow):
         def title(self):
             return STATES_NAMES[self.value]
 
+
+STATES_NAMES = {
+    State.CREATED: 'Entwurf',
+    State.PUBLISHED: 'gesendet',
+    State.PROGRESS: 'in Verarbeitung',
+    State.REVIEW: 'Review'
+}
+
+
+class Workflow(hurry.workflow.workflow.Workflow):
+
+    states = State
+
     @classmethod
     def create(cls):
         return cls([
@@ -30,37 +34,37 @@ class Workflow(hurry.workflow.workflow.Workflow):
                 transition_id='create',
                 title='create',
                 source=None,
-                destination=cls.State.CREATED),
+                destination=cls.states.CREATED),
 
             hurry.workflow.workflow.Transition(
                 transition_id='publish',
                 title='publish',
-                source=cls.State.CREATED,
-                destination=cls.State.PUBLISHED),
-            
+                source=cls.states.CREATED,
+                destination=cls.states.PUBLISHED),
+
             hurry.workflow.workflow.Transition(
                 transition_id='progress',
                 title='progress',
-                source=cls.State.CREATED,
-                destination=cls.State.PROGRESS),
-            
+                source=cls.states.CREATED,
+                destination=cls.states.PROGRESS),
+
             hurry.workflow.workflow.Transition(
                 transition_id='fix',
                 title='fix',
-                source=cls.State.PROGRESS,
-                destination=cls.State.PUBLISHED),
-            
+                source=cls.states.PROGRESS,
+                destination=cls.states.PUBLISHED),
+
             hurry.workflow.workflow.Transition(
                 transition_id='review',
                 title='publish_to_review',
-                source=cls.State.CREATED,
-                destination=cls.State.REVIEW),
-            
+                source=cls.states.CREATED,
+                destination=cls.states.REVIEW),
+
             hurry.workflow.workflow.Transition(
                 transition_id='review_to_publish',
                 title='review to publish',
-                source=cls.State.REVIEW,
-                destination=cls.State.PUBLISHED)])
+                source=cls.states.REVIEW,
+                destination=cls.states.PUBLISHED)])
 
 
 grok.global_utility(

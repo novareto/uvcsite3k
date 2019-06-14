@@ -2,29 +2,26 @@ import unittest
 import uvcsite.content.components
 import uvcsite.testing
 import uvcsite.workflow
+from uvcsite.workflow.workflow import Workflow
 
 
 class Person(uvcsite.content.components.Content):
-    state = uvcsite.workflow.State()
+    pass
 
 
 class TestWorkflowValues(unittest.TestCase):
 
     def test_values_int(self):
-        self.assertEqual(uvcsite.workflow.State.CREATED, 0)
-        self.assertEqual(uvcsite.workflow.State.PUBLISHED, 1)
-        self.assertEqual(uvcsite.workflow.State.PROGRESS, 2)
-        self.assertEqual(uvcsite.workflow.State.REVIEW, 3)
+        self.assertEqual(Workflow.states.CREATED, 0)
+        self.assertEqual(Workflow.states.PUBLISHED, 1)
+        self.assertEqual(Workflow.states.PROGRESS, 2)
+        self.assertEqual(Workflow.states.REVIEW, 3)
 
     def test_states_names(self):
-        self.assertEqual(
-            uvcsite.workflow.State.CREATED.title, "Entwurf")
-        self.assertEqual(
-            uvcsite.workflow.State.PUBLISHED.title, "gesendet")
-        self.assertEqual(
-            uvcsite.workflow.State.PROGRESS.title, "in Verarbeitung")
-        self.assertEqual(
-            uvcsite.workflow.State.REVIEW.title, "Review")
+        self.assertEqual(Workflow.states.CREATED.title, "Entwurf")
+        self.assertEqual(Workflow.states.PUBLISHED.title, "gesendet")
+        self.assertEqual(Workflow.states.PROGRESS.title, "in Verarbeitung")
+        self.assertEqual(Workflow.states.REVIEW.title, "Review")
 
 
 class TestApplicationWorkflow(unittest.TestCase):
@@ -54,18 +51,57 @@ class TestApplicationWorkflow(unittest.TestCase):
         self.assertEqual(self.klaus.state, 0)
 
     def test_content_publication(self):
-        from uvcsite.workflow.basic_workflow import Workflow
-        self.klaus.state = Workflow.State.PUBLISHED
+        self.klaus.state = Workflow.states.PUBLISHED
+
         self.assertEqual(self.klaus.state, 1)
 
-    def test_content_progress_then_fix(self):
-        from hurry.workflow.interfaces import IWorkflowState, IWorkflowInfo
+    def test_invalid_transition(self):
+        from hurry.workflow.interfaces import NoTransitionAvailableError
 
-        wf = IWorkflowState(self.klaus)
-        self.assertEqual(wf.getState(), 0)
+        self.klaus.state = Workflow.states.PUBLISHED
+        with self.assertRaises(NoTransitionAvailableError):
+            self.klaus.state = Workflow.states.PROGRESS
 
-        IWorkflowInfo(self.klaus).fireTransition('progress')
-        self.assertEqual(wf.getState(), 2)
+    def test_content_progress_then_publish(self):        
+        self.klaus.state = Workflow.states.PROGRESS
+        self.klaus.state = Workflow.states.PUBLISHED
 
-        IWorkflowInfo(self.klaus).fireTransition('fix')
-        self.assertEqual(wf.getState(), 1)
+
+class TestApplicationWorkflowXMLRPC(unittest.TestCase):
+    layer = uvcsite.testing.xmlrpc_layer
+
+    def setUp(self):
+        # This is done for each test.
+        self.app = self.layer.create_application('app')
+        self.klaus = self.app['klaus'] = Person()
+
+    def test_workflow_xmlrpc_faulty_transition(self):
+        from xmlrpc.client import ProtocolError
+
+        server = self.layer.xmlrpc_server(
+            "http://localhost/app/", handle_errors=True)
+
+        self.assertIsNone(server.klaus.publish())
+        self.assertEqual(server.klaus.state(), Workflow.states.PUBLISHED)
+        with self.assertRaises(ProtocolError):
+            server.klaus.publish()
+
+    def test_workflow_xmlrpc_progress_fix(self):
+        server = self.layer.xmlrpc_server(
+            "http://localhost/app/", handle_errors=True)
+
+        self.assertEqual(server.klaus.state(), Workflow.states.CREATED)
+        self.assertIsNone(server.klaus.progress())
+        self.assertIsNone(server.klaus.fix())
+        self.assertEqual(server.klaus.state(), Workflow.states.PUBLISHED)
+
+    def test_workflow_xmlrpc_review_publish(self):
+        from xmlrpc.client import ProtocolError
+
+        server = self.layer.xmlrpc_server(
+            "http://localhost/app/", handle_errors=True)
+
+        self.assertIsNone(server.klaus.review())
+        self.assertEqual(server.klaus.state(), Workflow.states.REVIEW)
+        self.assertIsNone(server.klaus.publish())
+        self.assertEqual(server.klaus.state(), Workflow.states.PUBLISHED)

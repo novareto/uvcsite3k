@@ -12,7 +12,12 @@ from zope.pluggableauth.factories import Principal
 
 
 def createProductFolders(principal=None):
-    request = zope.security.management.getInteraction().participations[0]
+    interaction = zope.security.management.getInteraction()
+    if interaction is None:
+        # We don't have a valid interaction, let's get out of here.
+        return
+
+    request = interaction.participations[0]
     if not principal:
         principal = request.principal
     for name, pr in getAdapters((principal, request), IProductRegistration):

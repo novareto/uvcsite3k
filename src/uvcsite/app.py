@@ -5,6 +5,7 @@ import zope.pluggableauth
 
 import uvcsite.interfaces
 import uvcsite.plugins
+import uvcsite.homefolder.homefolder
 
 
 def setup_pau(PAU):
@@ -27,3 +28,7 @@ class Uvcsite(grok.Application, grok.Container):
     @property
     def plugins(self):
         return uvcsite.plugins.PluginsPanel('plugins', self)
+
+    def __init__(self):
+        super().__init__()
+        self['members'] = uvcsite.homefolder.homefolder.Members()

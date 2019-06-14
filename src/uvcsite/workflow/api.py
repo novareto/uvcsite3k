@@ -1,19 +1,22 @@
 import grok
 import uvcsite.content.interfaces
-from hurry.workflow.interfaces import IWorkflowInfo, IWorkflowState
+from uvcsite.workflow.workflow import Workflow
 
 
 class WorkflowAPI(grok.XMLRPC):
     grok.context(uvcsite.content.interfaces.IContent)
 
     def publish(self):
-        return IWorkflowInfo(self.context).fireTransition('publish')
+        self.context.state = Workflow.states.PUBLISHED
 
+    def review(self):
+        self.context.state = Workflow.states.REVIEW
+        
     def progress(self):
-        return IWorkflowInfo(self.context).fireTransition('progress')
+        self.context.state = Workflow.states.PROGRESS
 
     def fix(self):
-        return IWorkflowInfo(self.context).fireTransition('fix')
+        self.context.state = Workflow.states.PUBLISHED
 
     def state(self):
-        return IWorkflowState(self.context).getState()
+        return self.context.state.value

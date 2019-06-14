@@ -52,7 +52,7 @@ class ReviewList(uvcsite.browser.TablePage):
     grok.require(uvcsite.permissions.Edit)
     grok.baseclass()
 
-    check = uvcsite.permissions.named(uvcsite.permissions.View)
+    check = uvcsite.permissions.View
 
     @property
     def values(self):

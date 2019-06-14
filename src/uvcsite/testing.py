@@ -3,15 +3,18 @@ import doctest
 import grokcore.site.util
 import transaction
 import unittest
-import uvcsite
-import uvcsite.app
-import uvcsite.testing
-
 import zope.testbrowser.wsgi
-from zope.testing import renormalizing
+
+from grokcore.xmlrpc.ftests.test_grok_functional import XMLRPCTestTransport
+from zope.app.wsgi.testlayer import XMLRPCServerProxy
 from zope.component import provideUtility
 from zope.component.hooks import setSite
 from zope.fanstatic.testing import ZopeFanstaticBrowserLayer
+from zope.testing import renormalizing
+
+import uvcsite
+import uvcsite.app
+import uvcsite.testing
 
 
 IGNORE = {
@@ -45,8 +48,23 @@ class BrowserLayer(AppLayer):
             url, wsgi_app=self.make_wsgi_app())
 
 
+class XMLRPC(AppLayer):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        transport = XMLRPCTestTransport()
+        transport.wsgi_app = self.make_wsgi_app
+        self.transport = transport
+
+    def xmlrpc_server(self, url, handle_errors=False):
+        server = XMLRPCServerProxy(url, transport=self.transport)
+        server.handleErrors = handle_errors
+        return server
+
+
 application_layer = AppLayer(uvcsite)
 browser_layer = BrowserLayer(uvcsite)
+xmlrpc_layer = XMLRPC(uvcsite)
 
 
 def suiteFromPackage(folder, module_name, layer=None):

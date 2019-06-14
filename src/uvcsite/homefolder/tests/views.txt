@@ -1,0 +1,189 @@
+Functional Doctests on homefolder views 
+=======================================
+
+:Test-Layer: functional
+
+
+Setup
+-----
+
+  >>> import uvcsite
+  >>> from uvcsite.app import Uvcsite
+  >>> root = getRootFolder()
+  >>> from uvcsite.tests import startInteraction, endInteraction
+  >>> request = startInteraction('lars')
+
+  >>> from uvcsite.homefolder.homefolder import HomeFolder
+  >>> root['app'] = Uvcsite()
+  >>> from zope.component.hooks import setSite
+  >>> setSite(root['app'])
+
+  >>> homefolder = uvcsite.getHomeFolder(request)
+
+  >>> import zope.interface
+
+  >>> from zope.securitypolicy.interfaces import IPrincipalRoleManager
+  >>> prm = IPrincipalRoleManager(homefolder)
+  >>> prm.assignRoleToPrincipal('uvc.Editor', 'someuser')
+
+TableView
+---------
+
+  >>> from zope.component import getMultiAdapter
+  >>> from zope.publisher.browser import TestRequest
+  >>> import zope.security.management
+
+
+  >>> index = getMultiAdapter((homefolder, request), name="index")
+  >>> index
+  <Index 'index'>
+
+
+We have one folder inside our homefolder.
+
+  >>> list(index.getContentTypes())
+  [{'href': 'http://127.0.0.1/app/members/lars/Adressbook', 'name': u'Adressbook'}]
+
+Now we can render the Index Page of the Homefolder: 
+
+  >>> index.update()
+  >>> print index.render()
+  <div id="homefolder">
+    <h1>Ordner von lars</h1>
+    <p class="description">Hier werden Ihre Dokumente abgelegt</p>
+    <div class="page-content">
+      <div class="batch pagination"></div>
+      <form action="http://127.0.0.1/app/members/lars" method="post">
+        <table class="tablesorter table table-striped table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th class="checkBox"></th>
+        <th>Titel</th>
+        <th>Objekt</th>
+        <th>Status</th>
+        <th>Autor</th>
+        <th class="sorted-on ascending">Datum</th>
+      </tr>
+    </thead>
+    <tbody>
+    </tbody>
+  </table>
+        <input class="btn btn-primary" type="submit" value="Entfernen" name="form.button.delete" />
+      </form>
+    </div>
+  </div> 
+
+
+There is no table in the view? This is because there
+is no content in the Folder. So we have to add some
+content to the container to see a table.
+
+Setting up a Container for Person Objects
+
+  >>> import grok
+  >>> from grok.interfaces import IContainer
+  >>> from zope.interface import implementer
+
+  >>> @implementer(IContainer)
+  ... class PersonContainer(grok.Container):
+  ...     pass
+
+  >>> IContainer.implementedBy(PersonContainer)
+  True
+
+Creating a Person Object
+
+  >>> from uvcsite.content.interfaces import IContent
+  >>> from uvcsite import Content
+  >>> class Person(Content):
+  ...     """ """
+  ...     name = ""
+  ...     age = ""
+  ...     title = ""
+
+  >>> hans = Person()
+  >>> hans.name = "Hans"
+  >>> hans.age = "44"
+  >>> hans.__name__ = "hans"
+
+  >>> IContent.providedBy(hans)
+  True
+
+Let's proof if the Homefolder Settings are correct!
+
+  >>> len(homefolder)
+  1
+
+  >>> homefolder['personcontainer'] = PersonContainer() 
+  >>> 'personcontainer' in homefolder
+  True
+
+  >>> homefolder['personcontainer']['hans'] = hans 
+  >>> 'hans' in homefolder['personcontainer']
+  True
+
+Now call the view with some contents...
+
+  >>> index = getMultiAdapter((homefolder, request), name="index")
+
+Let's check again if we now get **contenttypes** in our homefolder:
+
+  >>> [x for x in index.getContentTypes()]
+  [{'href': 'http://127.0.0.1/app/members/lars/Adressbook', 'name': u'Adressbook'}, {'href': 'http://127.0.0.1/app/members/lars/personcontainer', 'name': u'personcontainer'}]
+
+  [u'personcontainer']
+
+  >>> index.update()
+  >>> print index.render()
+  <div id="homefolder">
+    <h1>Ordner von lars</h1>
+    <p class="description">Hier werden Ihre Dokumente abgelegt</p>
+    <div class="page-content">
+      <div class="batch pagination"></div>
+      <form action="http://127.0.0.1/app/members/lars" method="post">
+        <table class="tablesorter table table-striped table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th class="checkBox"></th>
+        <th>Titel</th>
+        <th>Objekt</th>
+        <th>Status</th>
+        <th>Autor</th>
+        <th class="sorted-on ascending">Datum</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr class="even">
+        <td data-title="" ><input type="checkbox" class="checkbox-widget" name="table-checkBox-0-selectedItems" value="hans"  /></td>
+        <td data-title="Titel" ><a href="http://127.0.0.1/app/members/lars/personcontainer/hans/edit"></a></td>
+        <td data-title="Objekt" >Person</td>
+        <td data-title="Status" >Entwurf</td>
+        <td data-title="Autor" >lars</td>
+        <td class="sorted-on ascending" data-title="Datum" >...</td>
+      </tr>
+    </tbody>
+  </table>
+        <input class="btn btn-primary" type="submit" value="Entfernen" name="form.button.delete" />
+      </form>
+    </div>
+  </div>
+
+Delete Item Form
+----------------
+
+  >>> 'hans' in homefolder['personcontainer']
+  True
+
+Elements starting with __ are managment objects and they get not displayed
+
+  >>> homefolder['__hans__'] = PersonContainer() 
+  >>> '__hans__' in homefolder
+  True
+
+  >>> len(homefolder)
+  3 
+
+  >>> len(index.values)
+  1
+  >>> endInteraction()
+

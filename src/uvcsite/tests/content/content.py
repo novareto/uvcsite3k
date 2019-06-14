@@ -12,7 +12,7 @@ BaseClasses
   >>> from uvcsite.content.components import Content, ProductFolder
 
   >>> content = Content()
-  >>> content.__schema__
+  >>> content.schema
   ()
 
   >>> print(content.meta_type)
@@ -38,10 +38,8 @@ There should be the two attributes from our IContent Schema
 Schema
 ------
 
-  >>> contact.__schema__
+  >>> contact.schema
   (<InterfaceClass uvcsite.tests.content.content.IContact>,)
-
-
 
 """
 

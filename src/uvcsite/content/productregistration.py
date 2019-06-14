@@ -23,7 +23,7 @@ class ProductRegistration(ABC, grok.Subscription):
     grok.baseclass()
 
     key = None
-    
+
     @abstractmethod
     def available(self) -> bool:
         """Availability computation.

@@ -3,13 +3,7 @@ import grok
 import zope.interface
 import zope.component
 
-from collections import namedtuple
-from functools import wraps
-
 from zeam.form.base import Errors, Error, Actions, Action, FAILURE
-from zope.location import LocationProxy
-from zope.publisher.interfaces import browser
-from zope.traversing.interfaces import ITraversable
 from zope.dublincore.interfaces import IDCDescriptiveProperties
 
 import uvcsite.plugins
@@ -19,8 +13,7 @@ from uvcsite.plugins import flags
 class Status:
 
     def __init__(self, state, *infos):
-        assert state in flags.States
-        self.state = state
+        self.state = flags.States(state)
         self.infos = infos
 
     def __str__(self):
@@ -33,8 +26,7 @@ class Status:
 class Result:
 
     def __init__(self, type, value, redirect=False):
-        assert type in flags.ResultTypes
-        self.type = type
+        self.type = flags.ResultTypes(type)
         self.value = value
         self.redirect = redirect
         
@@ -129,7 +121,7 @@ class ComplexPlugin(Plugin):
             try:
                 method = getattr(sp, action, None)
                 if method is not None:
-                    result = method(site)
+                    _ = method(site)
             except uvcsite.plugins.PluginError as exc:
                 errors.extend(exc.messages)
 

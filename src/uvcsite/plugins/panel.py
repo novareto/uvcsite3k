@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import grok
 import json
 import zope.interface
@@ -7,7 +5,7 @@ import zope.component
 import uvcsite.browser
 
 import zope.schema
-from zeam.form.base import Errors, Error, FAILURE
+from zeam.form.base import FAILURE
 from zope.component import getMultiAdapter
 from zope.location import Location, LocationProxy
 from zope.container.interfaces import IReadContainer
@@ -15,8 +13,7 @@ from zope.dublincore.interfaces import IDCDescriptiveProperties
 from zope.publisher.interfaces.browser import IDefaultBrowserLayer
 
 from uvcsite.plugins.flags import States, ResultTypes
-from uvcsite.plugins.components import (
-    Result, PluginError, IPlugin, IComplexPlugin)
+from uvcsite.plugins.components import Result, IPlugin, IComplexPlugin
 
 
 grok.templatedir('templates')
@@ -25,9 +22,8 @@ grok.templatedir('templates')
 @zope.interface.implementer(IReadContainer, IDCDescriptiveProperties)
 class PluginsPanel(Location):
 
-    title = u"Plugins management panel"
-    description = (u"Application panel listing all the plugins "
-                   + u"manageable via the interface")
+    title = "Plugins"
+    description = "Application plugins management"
 
     def __init__(self, name, parent):
         self.__name__ = name
@@ -61,7 +57,7 @@ class PluginsPanelManagement(uvcsite.browser.Page):
     grok.require('grok.ManageApplications')
 
     needs_fontawesome = True
-    
+
     def plugins(self):
         url = self.url(self.context)
         for name, plugin in self.context:

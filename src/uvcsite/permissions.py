@@ -1,6 +1,4 @@
 import grok
-from uvcsite.workflow.workflow import Workflow
-from zope.securitypolicy.interfaces import IRolePermissionManager
 
 
 class View(grok.Permission):

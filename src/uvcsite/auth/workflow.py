@@ -37,4 +37,4 @@ def change_permissions(event):
         roleper.denyPermissionToRole(
             named(uvcsite.permissions.View), named(uvcsite.permissions.Editor))
         prinper.grantPermissionToPrincipal(
-            named(uvcsite.permissions.View), obj.principal.id)
+            named(uvcsite.permissions.View), event.object.principal.id)

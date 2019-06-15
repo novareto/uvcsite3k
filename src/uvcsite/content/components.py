@@ -56,10 +56,10 @@ class Content(grok.Model):
             for key, value in kwargs.items():
                 ifield = ifields.get(key)
                 if ifield is None:
-                    continue
-                field = ifield.bind(inst)
+                    raise AttributeError(f"`{key}` attribute doesn't exist.")
+                field = ifield.bind(self)
                 field.validate(value)
-                field.set(inst, value)
+                field.set(self, value)
 
     @property
     def meta_type(self):

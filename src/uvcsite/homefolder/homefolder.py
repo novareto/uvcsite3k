@@ -1,19 +1,8 @@
-from BTrees.OOBTree import OOBTree
-from persistent import Persistent
-
 import grok
 import uvcsite.interfaces
 from uvcsite.auth.interfaces import IMasterUser
-from uvcsite.content.interfaces import IProductFolder
 from uvcsite.interfaces import IHomeFolder, IHomeFolderManager
-
-from zope import component
-from zope.authentication.interfaces import IUnauthenticatedPrincipal
-from zope.component import getUtilitiesFor
-from zope.container.contained import Contained
-from zope.dottedname.resolve import resolve
 from zope.interface import implementer
-from zope.publisher.interfaces.browser import IBrowserRequest
 from zope.security.interfaces import IPrincipal
 from zope.securitypolicy.interfaces import IPrincipalRoleManager
 
@@ -65,10 +54,9 @@ class PortalMembership(grok.Adapter):
 
 
 @implementer(IHomeFolder)
-class HomeFolderForPrincipal(grok.Adapter):
-    grok.context(IPrincipal)
-
-    def __init__(self, principal):
-        self.principal = IMasterUser(principal)
-
-    homeFolder = property(lambda self: getHomeFolder(self.principal))
+@grok.adapter(IPrincipal)
+def principal_homefolder(principal):
+    principal = IMasterUser(principal)
+    application = grok.getApplication()
+    manager = IHomeFolderManager(application)
+    return manager.get(principal.id)

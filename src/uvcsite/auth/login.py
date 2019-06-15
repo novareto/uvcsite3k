@@ -2,7 +2,6 @@ import zope.schema
 import zope.interface
 import grokcore.view as grok
 
-from zope.event import notify
 from zope.traversing.browser.absoluteurl import absoluteURL
 from zope.authentication.interfaces import IUnauthenticatedPrincipal
 from zope.location.interfaces import ILocation
@@ -17,11 +16,17 @@ class ILoginForm(zope.interface.Interface):
     """A simple login form interface.
     """
 
-    login = zope.schema.TextLine(title=_("Username"), required=True)
+    login = zope.schema.TextLine(
+        title=_("Username"),
+        required=True)
 
-    password = zope.schema.Password(title=_("Password"), required=True)
+    password = zope.schema.Password(
+        title=_("Password"),
+        required=True)
 
-    camefrom = zope.schema.TextLine(title=_("TextLine"), required=True)
+    camefrom = zope.schema.TextLine(
+        title=_("TextLine"),
+        required=False)
 
 
 class Login(Form):
@@ -35,12 +40,9 @@ class Login(Form):
     label = _("Identify yourself")
     form_name = _("Login form")
 
-    @property
-    def fields(self):
-        fields = Fields(ILoginForm)
-        for field in fields:
-            field.prefix = ""
-        return fields
+    fields = Fields(ILoginForm)
+    for field in fields:
+        field.prefix = ""
 
     @action(_("Log in"))
     def login(self):

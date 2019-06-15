@@ -79,7 +79,7 @@ class JSON(grok.MultiAdapter):
         self.plugin = plugin
         self.request = request
         self.result = result
-    
+
     def __call__(self):
         return u'<pre>%s</pre>' % json.dumps(
             self.result.value, indent=4, sort_keys=True)
@@ -94,11 +94,11 @@ class plain(grok.MultiAdapter):
         self.plugin = plugin
         self.request = request
         self.result = result
-    
+
     def __call__(self):
         return u'<pre>%s</pre>' % self.result.value
 
-    
+
 class PluginOverview(uvcsite.browser.Form):
     grok.context(IPlugin)
     grok.name('index')

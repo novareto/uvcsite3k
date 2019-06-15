@@ -12,7 +12,7 @@ class HomeFolder(grok.Container):
 
     def values(self):
         for key, value in self.items():
-            if not key.startswith('__'):            
+            if not key.startswith('__'):
                 yield value
 
 

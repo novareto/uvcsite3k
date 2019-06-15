@@ -14,7 +14,7 @@ from zope.pluggableauth.factories import Principal
 
 @implementer(uvcsite.content.interfaces.IProductFolder)
 class ProductFolder(grok.Container):
-    
+
     @property
     def name(self):
         return directive.name.bind().get(self)

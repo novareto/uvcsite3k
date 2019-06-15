@@ -29,7 +29,7 @@ class Result:
         self.type = flags.ResultTypes(type)
         self.value = value
         self.redirect = redirect
-        
+
     def __str__(self):
         return str(self.type.value)
 
@@ -88,6 +88,7 @@ class PluginAction(Action):
 def plugin_action(title, *valid_states):
     if not valid_states:
         valid_states = flags.States
+
     def callback(method):
         frame = sys._getframe(1)
         f_locals = frame.f_locals
@@ -95,6 +96,7 @@ def plugin_action(title, *valid_states):
         action = PluginAction(method, title, valid_states)
         actions.append(action)
         return method
+
     return callback
 
 

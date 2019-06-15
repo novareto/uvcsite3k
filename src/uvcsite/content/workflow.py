@@ -16,4 +16,4 @@ class WorkflowInfo(hurry.workflow.workflow.WorkflowInfo, grok.Adapter):
 
 @grok.subscribe(uvcsite.content.interfaces.IContent, grok.IObjectAddedEvent)
 def initializeWorkflow(content, event):
-     hurry.workflow.interfaces.IWorkflowInfo(content).fireTransition('create')
+    hurry.workflow.interfaces.IWorkflowInfo(content).fireTransition('create')

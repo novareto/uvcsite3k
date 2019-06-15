@@ -25,7 +25,7 @@ class View(BaseView):
 
 class Page(GrokView, BasePage):
     baseclass()
-    
+
 
 class TablePage(GrokView, TablePage):
     baseclass()
@@ -38,7 +38,6 @@ class Form(Form):
         """Return the URL of the nearest enclosing `grok.Application`.
         """
         return url(self.request, getApplication(), name=name, data=data)
-
 
     def flash(self, message, type='message'):
         """Send a short message to the user.

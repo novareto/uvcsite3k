@@ -40,13 +40,12 @@ class Cataloger:
     def install(self, site):
         try:
             grok.notify(self.trigger(site))
-        except:
-            # should log
-            pass
+        except Exception as exc:
+            print(f'An error occured ({exc}). This should be logged.')
         if self.get(site) is None:
             raise uvcsite.plugins.PluginError(
                 self.title,
-                u'Catalog registration was unsuccessful.')
+                'Catalog registration was unsuccessful.')
 
     def uninstall(self, site):
         sm = site.getSiteManager()

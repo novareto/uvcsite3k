@@ -1,6 +1,6 @@
+import grok
 import zope.schema
 import zope.interface
-import grokcore.view as grok
 
 from zope.traversing.browser.absoluteurl import absoluteURL
 from zope.authentication.interfaces import IUnauthenticatedPrincipal
@@ -59,7 +59,7 @@ class Login(Form):
             _("You are now logged in as ${name}",
               mapping={"name": principal.id}))
 
-        notify(uvcsite.auth.interfaces.UserLoginEvent(principal))
+        grok.notify(uvcsite.auth.interfaces.UserLoginEvent(principal))
         camefrom = self.request.get("camefrom", None)
         if not camefrom:
             if ILocation.providedBy(principal):

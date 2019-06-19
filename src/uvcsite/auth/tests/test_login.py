@@ -57,7 +57,7 @@ class TestLogin(unittest.TestCase):
 
     def test_login(self):
         app = self.layer.create_application('app')
-        browser = self.layer.new_browser('http://localhost/app/@@login')
+        browser = self.layer.new_browser('http://localhost/app/@@login', handle_errors=False)
 
         # Filling up the form.
         form = browser.getForm()

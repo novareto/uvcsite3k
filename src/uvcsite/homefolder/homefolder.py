@@ -5,6 +5,7 @@ from uvcsite.interfaces import IHomeFolder, IHomeFolderManager
 from zope.interface import implementer
 from zope.security.interfaces import IPrincipal
 from zope.securitypolicy.interfaces import IPrincipalRoleManager
+from zope.publisher.interfaces import IApplicationRequest
 
 
 @implementer(IHomeFolder)
@@ -53,10 +54,16 @@ class PortalMembership(grok.Adapter):
             return default
 
 
-@implementer(IHomeFolder)
+@grok.implementer(IHomeFolder)
 @grok.adapter(IPrincipal)
 def principal_homefolder(principal):
     principal = IMasterUser(principal)
     application = grok.getApplication()
     manager = IHomeFolderManager(application)
-    return manager.get(principal.id)
+    return manager[principal.id]
+
+
+@grok.implementer(IHomeFolder)
+@grok.adapter(IApplicationRequest)
+def request_principal_homefolder(request):
+    return principal_homefolder(request.principal)

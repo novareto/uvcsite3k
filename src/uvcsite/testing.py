@@ -30,7 +30,6 @@ class AuthenticatedRequest:
         self.principal = Principal(uid)
 
     def __enter__(self):
-        zope.security.management.endInteraction()
         self.request.setPrincipal(self.principal)
         zope.security.management.newInteraction(self.request)
         return self.request

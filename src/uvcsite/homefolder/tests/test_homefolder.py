@@ -48,3 +48,15 @@ class TestHomefolder(unittest.TestCase):
         for role, setting in prm.getRolesForPrincipal('lars'):
             self.assertTrue(role in utility.owner_roles)
             self.assertEqual(setting, zope.securitypolicy.settings.Allow)
+
+    def test_unexisting_homefolder_resolution(self):
+        with uvcsite.testing.AuthenticatedRequest('lars') as request:
+            with self.assertRaises(KeyError):
+                uvcsite.interfaces.IHomeFolder(request)
+
+    def test_homefolder_resolution(self):
+        utility = uvcsite.interfaces.IHomeFolderManager(self.app)
+        homefolder = utility.create('lars')
+        with uvcsite.testing.AuthenticatedRequest('lars') as request:
+            found = uvcsite.interfaces.IHomeFolder(request)
+            self.assertTrue(found is homefolder)

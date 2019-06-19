@@ -17,4 +17,7 @@
   <include package="zope.pluggableauth" />
   <include package="zope.pluggableauth.plugins" file="groupfolder.zcml" />
 
+  <include package="uvc.siguvtheme" />
+  <include package="uvc.example" />
+
 </configure>

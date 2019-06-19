@@ -23,6 +23,7 @@ versioning = true
 minified = true
 rollup = true
 recompute_hashes = false
+compile = true
 
 [app:grok]
 use = egg:grokcore.startup
@@ -34,13 +35,13 @@ keys = root, accesslogging, grok
 
 [logger_root]
 level = INFO
-handlers = eventlog
+handlers = eventlog, eventlog_stream
 
 [logger_grok]
 # Set level to WARNING or below if you want to see
 # grok template registry warnings on commandline.
 level = ERROR
-handlers = eventlog
+handlers = eventlog, eventlog_stream
 qualname = grok
 propagate = 0
 
@@ -51,7 +52,13 @@ qualname = wsgi
 propagate = 0
 
 [handlers]
-keys = eventlog, accesslog
+keys = eventlog, accesslog, eventlog_stream
+
+[handler_eventlog_stream]
+class = StreamHandler 
+args = (sys.stderr,)
+level = NOTSET
+formatter = generic
 
 [handler_eventlog]
 class = FileHandler

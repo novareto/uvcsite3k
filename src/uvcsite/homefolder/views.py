@@ -84,6 +84,7 @@ class DirectAccessViewlet(grok.Viewlet):
 
     def getContentTypes(self):
         interaction = self.request.interaction
+        return []
         hf = uvcsite.getHomeFolder(self.request)
         for value in get_product_registrations(
                 self.request.principal, discard_unavailable=True):

@@ -10,6 +10,7 @@ from zeam.form.base import action, Fields
 from uvcsite.browser import Form
 from zeam.form.base.markers import SUCCESS, FAILURE
 from uvcsite import uvcsiteMF as _
+import uvcsite.auth.interfaces
 
 
 class ILoginForm(zope.interface.Interface):
@@ -58,7 +59,7 @@ class Login(Form):
             _("You are now logged in as ${name}",
               mapping={"name": principal.id}))
 
-        #   notify(UserLoginEvent(principal))    # BBB
+        notify(uvcsite.auth.interfaces.UserLoginEvent(principal))
         camefrom = self.request.get("camefrom", None)
         if not camefrom:
             if ILocation.providedBy(principal):

@@ -10,7 +10,7 @@ from zope.securitypolicy.interfaces import IPrincipalRoleManager
 @grok.subscribe(IUserLoggedInEvent)
 def applyViewContentForCoUsers(factory):
     principal = factory.object
-    homefolder = IHomeFolder(principal).homeFolder
+    homefolder = IHomeFolder(principal)
     if not homefolder:
         return
     if homefolder.__name__ != principal.id:

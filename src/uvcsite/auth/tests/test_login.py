@@ -4,9 +4,12 @@ import uvcsite.interfaces
 import uvcsite.testing
 import uvcsite.homefolder.homefolder
 import zope.securitypolicy.settings
+import zope.component
 
 from grokcore.component.testing import grok_component, grok
 from uvcsite.tests import fixtures
+from zope.pluggableauth.factories import Principal
+from uvcsite.interfaces import IHomeFolder
 
 
 class TestAuthPlugin(unittest.TestCase):
@@ -38,7 +41,7 @@ class TestAuthPlugin(unittest.TestCase):
         self.assertEqual(plugins[0][0], 'principals')
         self.assertTrue(isinstance(plugins[0][1], UVCAuthenticator))
 
-    
+
 class TestLogin(unittest.TestCase):
     layer = uvcsite.testing.browser_layer
 
@@ -71,3 +74,25 @@ class TestLogin(unittest.TestCase):
         form.submit(name='action.log-in')
         self.assertTrue('dolmen.authcookie' in browser.cookies)
         self.assertEqual(browser.url, "http://localhost/app")
+
+
+class TestAuthEvents(unittest.TestCase):
+    layer = uvcsite.testing.application_layer
+
+    def setUp(self):
+        grok('uvcsite.tests.fixtures.usermanagement')
+
+    def test_auth_event(self):
+        class F:
+            def __init__(self, p):
+                self.object = p
+        self.layer.create_application('app')
+        principal = Principal('0101010001')
+        with self.assertRaises(KeyError):
+            homefolder = IHomeFolder(principal)
+        from uvcsite.auth.event import applyPermissionsForExistentCoUsers
+        applyPermissionsForExistentCoUsers(F(principal))
+        homefolder = IHomeFolder(principal)
+        from uvcsite.homefolder.homefolder import HomeFolder
+        self.assertTrue(isinstance(homefolder, HomeFolder))
+        self.assertEqual(str(homefolder), '<Homefolder for 0101010001>')

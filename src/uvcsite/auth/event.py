@@ -28,6 +28,7 @@ def applyPermissionsForExistentCoUsers(factory):
     hfm = IHomeFolderManager(site)
     principal = factory.object
     master_id = IMasterUser(principal).id
+
     if not hfm.get(master_id):
         hfm.create(IMasterUser(principal).id)
     homefolder = IHomeFolder(principal)

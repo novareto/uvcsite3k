@@ -2,8 +2,8 @@ import grok
 import uvcsite
 import zope.interface
 import zope.component.interfaces
+import uvcsite.auth.interfaces
 
-from uvcsite.auth.interfaces import ICOUser
 from uvcsite.extranetmembership.interfaces import IUserManagement
 from uvcsite.interfaces import IHomeFolder
 from zope.component import getUtility
@@ -11,15 +11,7 @@ from zope.pluggableauth.interfaces import IAuthenticatedPrincipalCreated
 from zope.securitypolicy.interfaces import IPrincipalRoleManager
 
 
-class IUserLoggedInEvent(zope.component.interfaces.IObjectEvent):
-    pass
-
-
-class UserLoggedInEvent(zope.component.interfaces.ObjectEvent):
-    pass
-
-
-@grok.subscribe(IUserLoggedInEvent)
+@grok.subscribe(uvcsite.auth.interfaces.UserLoggedInEvent)
 def applyPermissionsForExistentCoUsers(factory):
     principal = factory.object
     homefolder = IHomeFolder(principal)
@@ -49,4 +41,4 @@ def applyGroups(factory):
     principal = factory.principal
     principal.groups.append('uvc.Member')
     if principal.id.count('-') >= 1:
-        zope.interface.alsoProvides(principal, ICOUser)
+        zope.interface.alsoProvides(principal, uvcsite.auth.interfaces.ICOUser)

@@ -1,3 +1,4 @@
 <configure xmlns="http://namespaces.zope.org/zope" i18n_domain="uvcsite">
   <include package="uvcsite" />
+  ${zope_conf:extra}
 </configure>

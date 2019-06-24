@@ -48,7 +48,7 @@ class PortalMembership(grok.Adapter):
     def __getitem__(self, uid):
         if uid in self.container:
             return self.container[uid]
-        return self.create(uid)
+        raise KeyError('Unknown homefolder.')
 
     def get(self, uid, default=None):
         try:
@@ -63,7 +63,7 @@ def principal_homefolder(principal):
     principal = IMasterUser(principal)
     application = grok.getApplication()
     manager = IHomeFolderManager(application)
-    return manager.get(principal.id)
+    return manager[principal.id]
 
 
 @grok.implementer(IHomeFolder)

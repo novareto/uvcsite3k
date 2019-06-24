@@ -11,6 +11,9 @@ from zope.publisher.interfaces import IApplicationRequest
 @implementer(IHomeFolder)
 class HomeFolder(grok.Container):
 
+    def __repr__(self):
+        return "<Homefolder for %s>" % self.__name__
+
     def values(self):
         for key, value in self.items():
             if not key.startswith('__'):

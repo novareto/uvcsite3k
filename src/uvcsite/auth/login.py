@@ -11,6 +11,7 @@ from uvcsite.browser import Form
 from zeam.form.base.markers import SUCCESS, FAILURE
 from uvcsite import uvcsiteMF as _
 import uvcsite.auth.interfaces
+from uvcsite.auth.event import UserLoggedInEvent
 
 
 class ILoginForm(zope.interface.Interface):
@@ -59,7 +60,7 @@ class Login(Form):
             _("You are now logged in as ${name}",
               mapping={"name": principal.id}))
 
-        grok.notify(uvcsite.auth.interfaces.UserLoginEvent(principal))
+        grok.notify(UserLoggedInEvent(principal))
         camefrom = self.request.get("camefrom", None)
         if not camefrom:
             if ILocation.providedBy(principal):

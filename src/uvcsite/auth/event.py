@@ -9,31 +9,17 @@ from uvcsite.interfaces import IHomeFolder
 from zope.component import getUtility
 from zope.pluggableauth.interfaces import IAuthenticatedPrincipalCreated
 from zope.securitypolicy.interfaces import IPrincipalRoleManager
+from uvcsite.interfaces import IHomeFolderManager
+from uvcsite.auth.interfaces import IMasterUser
 
 
-@grok.subscribe(uvcsite.auth.interfaces.UserLoggedInEvent)
-def applyPermissionsForExistentCoUsers(factory):
-    principal = factory.object
-    homefolder = IHomeFolder(principal)
-    if not homefolder:
-        return
-    um = getUtility(IUserManagement)
-    user = um.getUser(principal.id)
-    if not user:
-        return
-    rollen = user['rollen']
-    if user['az'] != '00':
-        pid = "%s-%s" % (user['mnr'], user['az'])
-    else:
-        pid = user['mnr']
-    if homefolder.__name__ != pid:
-        for pf in homefolder.keys():
-            if pf in rollen:
-                prm = IPrincipalRoleManager(homefolder.get(pf))
-                if prm.getSetting('uvc.Editor', pid).getName() == 'Unset':
-                    prm.assignRoleToPrincipal('uvc.Editor', pid)
-                    uvcsite.log(
-                        'Give uvc.Editor to %s in folder %s' % (pid, pf))
+class IUserLoggedInEvent(zope.component.interfaces.IObjectEvent):
+    pass
+
+
+@zope.interface.implementer(IUserLoggedInEvent)
+class UserLoggedInEvent(zope.component.interfaces.ObjectEvent):
+    pass
 
 
 @grok.subscribe(IAuthenticatedPrincipalCreated)

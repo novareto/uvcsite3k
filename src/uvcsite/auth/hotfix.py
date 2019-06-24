@@ -7,11 +7,11 @@ from uvcsite.auth.event import IUserLoggedInEvent
 from zope.securitypolicy.interfaces import IPrincipalRoleManager
 
 
-@grok.subscribe(IUserLoggedInEvent)
+#@grok.subscribe(IUserLoggedInEvent)
 def applyViewContentForCoUsers(factory):
     principal = factory.object
     homefolder = IHomeFolder(principal)
-    if not homefolder:
+    if homefolder is None:
         return
     if homefolder.__name__ != principal.id:
         hprm = IPrincipalRoleManager(homefolder)

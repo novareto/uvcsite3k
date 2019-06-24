@@ -50,12 +50,13 @@ class UVCAuthenticator(grok.GlobalUtility):
                     and 'password' in credentials):
                 return
             login, password = credentials['login'], credentials['password']
+            print(login)
             utility = queryUtility(IUserManagement)
             if not utility:
                 return None
 
-            if hasattr(utility, 'changeLogin'):
-                login = utility.changeLogin(login)
+            #if hasattr(utility, 'changeLogin'):
+            #    login = utility.changeLogin(login)
 
             if not utility.checkRule(login):
                 return

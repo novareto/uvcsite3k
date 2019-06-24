@@ -7,6 +7,8 @@ from zeam.form.base import Form, Fields
 from zope.interface import implementer
 from grokcore.view.util import url
 from grokcore.site.util import getApplication
+from grokcore.layout.components import LayoutAware
+from zeam.form.layout import Form
 import grokcore.message
 
 
@@ -31,7 +33,7 @@ class TablePage(GrokView, TablePage):
     baseclass()
 
 
-class Form(Form):
+class Form(Form, LayoutAware):
     baseclass()
 
     def application_url(self, name=None, data={}):

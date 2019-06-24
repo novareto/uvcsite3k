@@ -60,6 +60,7 @@ class Index(uvcsite.browser.TablePage):
         return f"{url}/@@add"
 
     def getAddTitle(self):
+        return u"BLAB"
         return self.context.getContentName()
 
     def renderCell(self, item, column, colspan=0):
@@ -146,7 +147,7 @@ class Add(uvcsite.browser.forms.AddForm):
 
     @property
     def label(self):
-        return self.context.getContentName()
+        return self.context.title
 
     description = u"Bitte füllen Sie die Eingabeform."
 
@@ -183,7 +184,7 @@ class Edit(uvcsite.browser.Form):
         if errors:
             self.flash('Es sind Fehler aufgetreten', type="error")
             return
-        changes = apply_data_event(self.fields, self.context, data)
+        changes = uvcsite.browser.forms.apply_data_event(self.fields, self.context, data)
         if changes:
             self.flash(u'Ihre Daten wurden erfolgreich gendert', type="info")
             return

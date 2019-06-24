@@ -30,7 +30,6 @@ class ILoginForm(zope.interface.Interface):
         title=_("TextLine"),
         required=False)
 
-
 class Login(Form):
     """A very basic implementation of a login form.
     """

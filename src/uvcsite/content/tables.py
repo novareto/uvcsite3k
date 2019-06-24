@@ -26,12 +26,10 @@ class CheckBox(CheckBoxColumn):
     header = u""
 
     def renderCell(self, item):
-        state = IWorkflowState(item).getState()
-        if state is not None:
-            state = titleForState(state)
+        state = item.state.title
         if state == "Entwurf":
             return CheckBoxColumn.renderCell(self, item)
-        return ''
+        return state 
 
 
 class Link(LinkColumn):
@@ -44,9 +42,7 @@ class Link(LinkColumn):
 
     def getLinkURL(self, item):
         """Setup link url."""
-        state = IWorkflowState(item).getState()
-        if state is not None:
-            state = titleForState(state)
+        state = item.state.title
         if self.linkName is not None and state == "Entwurf":
             return '%s/%s' % (absoluteURL(item, self.request), self.linkName)
         return absoluteURL(item, self.request)
@@ -89,7 +85,7 @@ class ModifiedColumn(Column):
         return item.modtime
 
     def renderCell(self, item):
-        return uvcsite.fmtDateTime(item.modtime)
+        return item.modtime.strftime('%d.%m.%Y')
 
 
 class StateColumn(GetAttrColumn):
@@ -101,7 +97,5 @@ class StateColumn(GetAttrColumn):
     table(IContainerTable)
 
     def getValue(self, obj):
-        state = IWorkflowState(obj).getState()
-        if state is not None:
-            return titleForState(state)
-        return self.defaultValue
+        state = obj.state.title
+        return state

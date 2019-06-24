@@ -37,4 +37,3 @@ devmode ${devmode}
 
 # Extra configuration lines can be added to zope_conf's extra option. Put for
 # instance productconf sections in here.
-${zope_conf:extra}

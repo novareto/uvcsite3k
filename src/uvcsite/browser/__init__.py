@@ -1,19 +1,30 @@
-from grok import baseclass, View as BaseView
+from grok import baseclass, View as BaseView, Viewlet, context
 from grok.interfaces import IGrokView
 from grok.components import ViewSupportMixin
 from grokcore.layout import Page as BasePage
 from megrok.z3ctable import TablePage
-from zeam.form.base import Form, Fields
+from zeam.form.base import Fields
 from zope.interface import implementer
 from grokcore.view.util import url
 from grokcore.site.util import getApplication
 from grokcore.layout.components import LayoutAware
 from zeam.form.layout import Form
 import grokcore.message
+from zope.interface import Interface
 
 
-class MenuItem:
+class MenuItem(Viewlet):
     """Replace me by a meaningful class"""
+    baseclass()
+    context(Interface)
+
+    title = u""
+    selected = False
+    icon = u""
+
+    def render(self):
+        return u""
+    #render.base_method = True
 
 
 @implementer(IGrokView)

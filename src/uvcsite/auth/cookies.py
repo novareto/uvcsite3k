@@ -44,8 +44,8 @@ class CookiesCredentials(grok.GlobalUtility, SessionCredentialsPlugin):
 
     @staticmethod
     def make_cookie(login, password):
-        credstr = f"{login}:{password}"
-        val = base64.encodebytes(credstr.encode("utf-8"))
+        credstr = f"{login.decode('utf-8')}:{password.decode('utf-8')}"
+        val = base64.encodebytes(credstr.encode('utf-8'))
         return urllib.parse.quote(val)
 
     def extractCredentials(self, request):
@@ -57,6 +57,8 @@ class CookiesCredentials(grok.GlobalUtility, SessionCredentialsPlugin):
         cookie = request.get(self.cookie_name, None)
 
         if login and password:
+            login = login.encode('utf-8')
+            password = password.encode('utf-8')
             cookie = self.make_cookie(login, password)
             request.response.setCookie(self.cookie_name, cookie, path="/")
         elif cookie:
@@ -66,7 +68,7 @@ class CookiesCredentials(grok.GlobalUtility, SessionCredentialsPlugin):
         else:
             return
 
-        return {"login": login, "password": password}
+        return {"login": login.decode('utf-8'), "password": password.decode('utf-8')}
 
     def logout(self, request):
         if not IHTTPRequest.providedBy(request):

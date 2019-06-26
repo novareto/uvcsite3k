@@ -260,11 +260,12 @@ class ENMSUpdateUser(uvcsite.browser.Form):
 class ChangePasswordMenu(uvcsite.browser.MenuItem):
     grok.require('zope.View')
     grok.viewletmanager(uvcsite.browser.layout.slots.interfaces.IPersonalMenu)
+    title = u"Passwort ändern"
 
     @property
     def action(self):
         return self.view.url(
-            IHomeFolder(self.request.principal).homeFolder, 'changepassword')
+            IHomeFolder(self.request.principal), 'changepassword')
 
 
 class ChangePassword(uvcsite.browser.Form):

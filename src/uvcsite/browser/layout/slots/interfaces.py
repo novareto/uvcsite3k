@@ -51,6 +51,41 @@ class IExtraInfo(zope.interface.Interface):
     """
 
 
+
+class IPersonalPreferences(zope.interface.Interface):
+    """Marker for PersonalPreferences
+    """
+
+
+class IGlobalMenu(zope.interface.Interface):
+    """Marker for GlobalMenu
+    """
+
+
+class IPersonalMenu(zope.interface.Interface):
+    """Marker for PersonalMenu
+    """
+
+
+class IDocumentActions(zope.interface.Interface):
+    """Marker for DocumentActions
+    """
+
+
+class IQuickLinks(zope.interface.Interface):
+    """Marker for Qucklinks
+    """
+
+
+class IExtraViews(zope.interface.Interface):
+    """Marker for additional Views for Folders
+       Objects etc...
+    """
+
+class ISpotMenu(zope.interface.Interface):
+    """ Special Menu """
+
+
 __all__ = [
     "IAboveContent",
     "IBeforeActions",

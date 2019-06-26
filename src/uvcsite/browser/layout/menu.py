@@ -1,6 +1,8 @@
+import collections
+import collections.abc
 import grokcore.viewlet.util
 import grok
-from zope.component import queryAdapter, getAdapters 
+from zope.component import queryMultiAdapter, getAdapters 
 from zope.publisher.interfaces.browser import IDefaultBrowserLayer
 from grok.interfaces import IGrokView
 from zope.interface import Interface, implementer
@@ -19,9 +21,10 @@ class MenuItem(grok.MultiAdapter):
     grok.name('base entry')
     grok.adapts(Interface, IDefaultBrowserLayer, IGrokView, IMenu)
     grok.baseclass()
-    icon = ""
-    
 
+    icon = ""
+    title = ""
+    
     def __init__(self, context, request, view, menu):
         self.context = context
         self.request = request
@@ -36,7 +39,7 @@ class MenuItem(grok.MultiAdapter):
 
 
 @implementer(IMenu)
-class Menu(grok.MultiAdapter):
+class Menu(grok.MultiAdapter, collections.abc.Iterable):
     grok.name('base menu')
     grok.adapts(Interface, IDefaultBrowserLayer, IGrokView)
     grok.baseclass()
@@ -49,28 +52,29 @@ class Menu(grok.MultiAdapter):
     def available(self):
         return True
 
-    def entries(self):
-        return grokcore.viewlet.util.sort_components(
+    def __iter__(self):
+        for i in grokcore.viewlet.util.sort_components(
             (e for name, e in getAdapters(
                 (self.context, self.request, self.view, self), IMenuEntry)
-             if e.available()))
+             if e.available())):
+            yield i
+
+    def update(self):
+        self.entries = list(iter(self))
 
 
-class MenuRenderer(grok.ContentProvider):
-    grok.name('base renderer')
-    grok.context(Interface)
-    grok.view(IGrokView)
+class MenuRenderer(grok.ContentProvider, collections.abc.Iterable):
     grok.baseclass()
 
     bound_menus = tuple()
 
-    def update(self):
-        self.menus = []
+    def __iter__(self):
         for name in self.bound_menus:
             menu = queryMultiAdapter(
                 (self.context, self.request, self.view), IMenu, name=name)
             if menu is not None and menu.available():
-                self.menus.append(menu)
+                menu.update()
+                yield name, menu
 
-    def render(self):
-        return ', '.join(self.bound_menus)
+    def update(self):
+        self.menus = collections.OrderedDict(iter(self))

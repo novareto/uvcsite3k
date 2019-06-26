@@ -63,7 +63,7 @@ def principal_homefolder(principal):
     principal = IMasterUser(principal)
     application = grok.getApplication()
     manager = IHomeFolderManager(application)
-    return manager[principal.id]
+    return manager.get(principal.id)
 
 
 @grok.implementer(IHomeFolder)

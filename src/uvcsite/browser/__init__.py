@@ -13,20 +13,6 @@ import grokcore.message
 from zope.interface import Interface
 
 
-class MenuItem(Viewlet):
-    """Replace me by a meaningful class"""
-    baseclass()
-    context(Interface)
-
-    title = u""
-    selected = False
-    icon = u""
-
-    def render(self):
-        return u""
-    #render.base_method = True
-
-
 @implementer(IGrokView)
 class GrokView(ViewSupportMixin):
     pass

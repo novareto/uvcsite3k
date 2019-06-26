@@ -5,6 +5,7 @@
 import grok
 import uvcsite.browser
 import uvcsite.browser.layout.slots.interfaces
+import uvcsite.browser.layout.menu
 
 from grokcore.chameleon.components import ChameleonPageTemplateFile
 from uvcsite import uvcsiteMF as _
@@ -257,7 +258,7 @@ class ENMSUpdateUser(uvcsite.browser.Form):
         self.redirect(self.url(self.context.__parent__))
 
 
-class ChangePasswordMenu(uvcsite.browser.MenuItem):
+class ChangePasswordMenu(uvcsite.browser.layout.menu.MenuItem):
     grok.require('zope.View')
     grok.viewletmanager(uvcsite.browser.layout.slots.interfaces.IPersonalMenu)
     title = u"Passwort ändern"

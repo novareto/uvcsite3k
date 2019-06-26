@@ -27,9 +27,10 @@ class GlobalMenu(Menu):
     grok.implements(IGlobalMenu)
     grok.name("globalmenu")
 
-
-class PersonalPreferences(Menu):
+from uvcsite.browser.layout.menu import Menu as NM, IMenu
+class PersonalPreferences(NM):
     grok.implements(IPersonalPreferences)
+    grok.provides(IMenu)
     grok.name("personalpreferences")
 
 

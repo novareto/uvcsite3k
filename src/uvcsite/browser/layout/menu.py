@@ -1,5 +1,6 @@
 import grokcore.viewlet.util
-from zope.component import queryAdapters, queryMultiAdapter
+import grok
+from zope.component import queryAdapter, getAdapters 
 from zope.publisher.interfaces.browser import IDefaultBrowserLayer
 from grok.interfaces import IGrokView
 from zope.interface import Interface, implementer
@@ -18,6 +19,8 @@ class MenuItem(grok.MultiAdapter):
     grok.name('base entry')
     grok.adapts(Interface, IDefaultBrowserLayer, IGrokView, IMenu)
     grok.baseclass()
+    icon = ""
+    
 
     def __init__(self, context, request, view, menu):
         self.context = context
@@ -48,9 +51,9 @@ class Menu(grok.MultiAdapter):
 
     def entries(self):
         return grokcore.viewlet.util.sort_components(
-            (e for name, e in queryAdapters(
-                (self.context, self.request, self.view, self), IMenuEntry))
-             if e.available())
+            (e for name, e in getAdapters(
+                (self.context, self.request, self.view, self), IMenuEntry)
+             if e.available()))
 
 
 class MenuRenderer(grok.ContentProvider):

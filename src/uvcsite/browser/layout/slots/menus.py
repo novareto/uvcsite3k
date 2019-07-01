@@ -3,6 +3,7 @@
 # cklinger@novareto.de
 
 import grok
+import uvcsite
 
 from megrok.pagetemplate import PageTemplate
 from .interfaces import (
@@ -50,20 +51,25 @@ class SpotMenu(Menu):
     grok.name("spotmenu")
 
 
-class PersonalMenu(Menu):
+class PersonalMenu(NM):
     grok.implements(IPersonalMenu)
+    grok.provides(IMenu)
+    grok.context(Interface)
+    grok.name("personal_menu")
+
+
+class PersonalMenuRenderer(uvcsite.browser.layout.menu.MenuRenderer):
     grok.context(Interface)
     grok.name("personalmenu")
 
-    def render(self):
-        template = getMultiAdapter((self, self.request), IPageTemplate)
-        return template()
+    bound_menus = ('personal_menu', "personalpreferences")
+
+    def update(self):
+        super(PersonalMenuRenderer, self).update()
+        print(self.menus)
 
 
-class PersonalMenuTemplate(PageTemplate):
-    grok.view(PersonalMenu)
-
-
-class QuickLinks(Menu):
+class QuickLinks(NM):
     grok.implements(IQuickLinks)
+    grok.provides(IMenu)
     grok.name("quicklinks")

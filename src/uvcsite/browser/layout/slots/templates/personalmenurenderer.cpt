@@ -1,6 +1,6 @@
 <ul class="list-unstyled">
-  <li tal:repeat="viewlet viewletmanager.viewlets">
-  <a href="" tal:attributes="href viewlet.action;">
+  <li tal:repeat="viewlet provider.menus['personal_menu']">
+  <a href="" tal:attributes="href viewlet.url;">
     <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
     <span tal:content="viewlet.title"> </span>
   </a>

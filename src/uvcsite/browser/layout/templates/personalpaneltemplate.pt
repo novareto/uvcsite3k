@@ -1,0 +1,5 @@
+<div>
+  <h1 tal:content="view/title | nothing"></h1>
+  <p tal:content="view/description" />
+  <span tal:replace="structure provider:personalmenu"/>
+</div>

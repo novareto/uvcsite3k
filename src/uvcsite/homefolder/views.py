@@ -79,7 +79,7 @@ class Index(uvcsite.browser.TablePage):
 
 class DirectAccessViewlet(grok.Viewlet):
     grok.order(25)
-    grok.context(Interface)
+    grok.context(IHomeFolder)
     grok.viewletmanager(uvcsite.browser.layout.slots.interfaces.ITabs)
 
     def getContentTypes(self):

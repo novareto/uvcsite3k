@@ -51,11 +51,11 @@ class TestHomefolder(unittest.TestCase):
 
     def test_unexisting_homefolder_resolution(self):
         with uvcsite.testing.AuthenticatedRequest('lars') as request:
-            self.assertEqual(uvcsite.interfaces.IHomeFolder(request.principal), None)
+            self.assertIsNone(uvcsite.interfaces.IHomeFolder(request.principal, None))
 
     def test_homefolder_resolution(self):
         utility = uvcsite.interfaces.IHomeFolderManager(self.app)
         homefolder = utility.create('lars')
         with uvcsite.testing.AuthenticatedRequest('lars') as request:
-            found = uvcsite.interfaces.IHomeFolder(request)
+            found = uvcsite.interfaces.IHomeFolder(request.principal)
             self.assertTrue(found is homefolder)

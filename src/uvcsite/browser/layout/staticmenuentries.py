@@ -60,7 +60,9 @@ class PersonalPanelEntry(uvcsite.browser.layout.menu.MenuItem):
         principal = self.request.principal
         if IUnauthenticatedPrincipal.providedBy(principal):
             return
-        hf = IHomeFolder(principal)
+        hf = IHomeFolder(principal, None)
+        if None:
+            return ""
         viewname = "personalpanelview"
         return urllib.parse.unquote(grok.util.url(self.request, hf, viewname))
 
@@ -105,8 +107,10 @@ class MeinOrdner(uvcsite.browser.layout.menu.MenuItem):
         principal = self.request.principal
         if IUnauthenticatedPrincipal.providedBy(principal):
             return
-        hf = IHomeFolder(principal)
-        return urllib.parse.unquote(grok.util.url(self.request, hf))
+        hf = IHomeFolder(principal, None)
+        if hf:
+            return urllib.parse.unquote(grok.util.url(self.request, hf))
+        return ""
 
 
 
@@ -127,6 +131,8 @@ class Mitbenutzerverwaltung(uvcsite.browser.layout.menu.MenuItem):
         principal = self.request.principal
         if IUnauthenticatedPrincipal.providedBy(principal):
             return
-        homeFolder = IHomeFolder(principal)
-        return str(absoluteURL(homeFolder, self.request)) + "/enms"
+        homeFolder = IHomeFolder(principal, None)
+        if homeFolder:
+            return str(absoluteURL(homeFolder, self.request)) + "/enms"
+        return ""
 

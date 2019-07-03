@@ -84,14 +84,13 @@ class DirectAccessViewlet(grok.Viewlet):
 
     def getContentTypes(self):
         interaction = self.request.interaction
-        return []
-        hf = uvcsite.getHomeFolder(self.request)
+        hf = uvcsite.interfaces.IHomeFolder(self.request.principal, [])
         for value in get_product_registrations(
                 self.request.principal, discard_unavailable=True):
             pf = hf[value.key]
             if interaction.checkPermission('uvc.ViewContent', pf):
                 yield dict(href=absoluteURL(pf, self.request),
-                           name=value.title)
+                           name=value.key)
 
     def render(self):
         template = getMultiAdapter((self, self.request), IPageTemplate)

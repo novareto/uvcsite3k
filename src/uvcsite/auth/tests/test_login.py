@@ -88,8 +88,7 @@ class TestAuthEvents(unittest.TestCase):
                 self.object = p
         self.layer.create_application('app')
         principal = Principal('0101010001')
-        import pdb; pdb.set_trace()
-        homefolder = IHomeFolder(principal)
+        homefolder = IHomeFolder(principal, None)
         self.assertEqual(homefolder, None)
         from uvcsite.auth.event import applyPermissionsForExistentCoUsers
         applyPermissionsForExistentCoUsers(F(principal))

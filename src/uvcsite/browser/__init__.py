@@ -38,6 +38,7 @@ class Form(Form, LayoutAware):
         'group-error': 'form-group alert-danger has-error',
         'field': ['form-control'],
         'field-error': ['form-control', 'is-invalid'],
+        'button': 'action btn',
     }
 
     def updateWidgets(self):
@@ -47,6 +48,14 @@ class Form(Form, LayoutAware):
                 widget.defaultHtmlClass += self.classes['field-error']
             else:
               widget.defaultHtmlClass += self.classes['field']
+
+        for widget in self.actionWidgets:
+            cls = self.classes['button']
+            if widget.identifier in self.classes:
+                cls = '{} {}'.format(cls, self.classes[widget.identifier])
+            else:
+                cls = f'{cls} btn-primary'
+            widget.htmlClass = lambda: cls
 
     def application_url(self, name=None, data={}):
         """Return the URL of the nearest enclosing `grok.Application`.

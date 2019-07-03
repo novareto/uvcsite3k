@@ -33,6 +33,21 @@ class TablePage(GrokView, TablePage):
 class Form(Form, LayoutAware):
     baseclass()
 
+    classes = {
+        'group': 'form-group',
+        'group-error': 'form-group alert-danger has-error',
+        'field': ['form-control'],
+        'field-error': ['form-control', 'is-invalid'],
+    }
+
+    def updateWidgets(self):
+        super().updateWidgets()
+        for widget in self.fieldWidgets:
+            if widget.error:
+                widget.defaultHtmlClass += self.classes['field-error']
+            else:
+              widget.defaultHtmlClass += self.classes['field']
+
     def application_url(self, name=None, data={}):
         """Return the URL of the nearest enclosing `grok.Application`.
         """

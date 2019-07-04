@@ -45,9 +45,11 @@ class Form(Form, LayoutAware):
         super().updateWidgets()
         for widget in self.fieldWidgets:
             if widget.error:
-                widget.defaultHtmlClass += self.classes['field-error']
+                widget.htmlClass = lambda: ' '.join(
+                    widget.defaultHtmlClass + self.classes['field-error'])
             else:
-              widget.defaultHtmlClass += self.classes['field']
+                widget.htmlClass = lambda: ' '.join(
+                    widget.defaultHtmlClass + self.classes['field'])
 
         for widget in self.actionWidgets:
             cls = self.classes['button']

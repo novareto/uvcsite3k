@@ -25,11 +25,11 @@ class Cataloger:
         catalog_name = grok.name.bind().get(self.catalog)
         catalog = queryUtility(ICatalog, name=catalog_name) is not None
         if catalog:
-            return uvcsite.plugins.Status(
-                state=uvcsite.plugins.States.INSTALLED
+            return uvcsite.plugins.components.Status(
+                state=uvcsite.plugins.flags.States.INSTALLED
             )
-        return uvcsite.plugins.Status(
-            state=uvcsite.plugins.States.NOT_INSTALLED
+        return uvcsite.plugins.components.Status(
+            state=uvcsite.plugins.flags.States.NOT_INSTALLED
         )
 
     def get(self, site):
@@ -93,70 +93,72 @@ class PAUComponent:
             'credentialsPlugins', ICredentialsPlugin)
     }
 
-    def __init__(self, component, type):
+    def __init__(self, component, type, local=True, name=None):
         self.component = component  # callable factory
         assert type in self.types
         self.type = type
+        self.local = local
         self.attribute, self.provides = self.types[type]
+        self.name = (
+            name or grok.name.bind().get(self.component)
+            or self.component.__name__)
+        assert self.name
 
     @CachedProperty
     def title(self):
-        return 'PAUComponent: %s (%s)' % (self.component.__name__, self.type)
+        return 'PAUComponent: %s (%s)' % (self.name, self.type)
 
     @property
     def status(self):
         pau = queryUtility(IAuthentication)
-        name = grok.name.bind().get(self.component)
-        pau_available = name in getattr(pau, self.attribute)
+        pau_available = self.name in getattr(pau, self.attribute)
 
         sm = getSiteManager()
-        sm_available = name in sm
+        sm_available = self.name in sm if self.local else True
 
         if pau_available and sm_available:
-            return uvcsite.plugins.Status(
-                state=uvcsite.plugins.States.INSTALLED)
+            return uvcsite.plugins.components.Status(
+                state=uvcsite.plugins.flags.States.INSTALLED)
 
         if pau_available or sm_available:
-            return uvcsite.plugins.Status(
-                state=uvcsite.plugins.States.INCONSISTANT)
+            return uvcsite.plugins.components.Status(
+                state=uvcsite.plugins.flags.States.INCONSISTANT)
 
-        return uvcsite.plugins.Status(
-            state=uvcsite.plugins.States.NOT_INSTALLED)
+        return uvcsite.plugins.components.Status(
+            state=uvcsite.plugins.flags.States.NOT_INSTALLED)
 
     def get(self, site):
         sm = site.getSiteManager()
-        name = grok.name.bind().get(self.component)
-        return sm.queryUtility(self.provides, name=name)
+        return sm.queryUtility(self.provides, name=self.name)
 
     def install(self, site):
         sm = site.getSiteManager()
         pau = sm.queryUtility(IAuthentication)
-        name = grok.name.bind().get(self.component)
-
         values = getattr(pau, self.attribute)
-        if name not in values:
-            setattr(pau, self.attribute, values + (name,))
+        
+        if self.name not in values:
+            setattr(pau, self.attribute, values + (self.name,))
 
-        if name not in sm:
+        if self.local and self.name not in sm:
             sm = site.getSiteManager()
             utility = self.component()
-            sm[name] = utility
+            sm[self.name] = utility
             sm.registerUtility(
-                utility, provided=IAuthenticatorPlugin, name=name)
+                utility, provided=IAuthenticatorPlugin, name=self.name)
         return True
 
     def uninstall(self, site):
         sm = site.getSiteManager()
         pau = sm.queryUtility(IAuthentication)
-        name = grok.name.bind().get(self.component)
 
-        if name in sm:
+        if self.local and self.name in sm:
             sm = site.getSiteManager()
-            utility = sm[name]
+            utility = sm[self.name]
             sm.unregisterUtility(
-                utility, provided=IAuthenticatorPlugin, name=name)
-            del sm[name]
+                utility, provided=IAuthenticatorPlugin, name=self.name)
+            del sm[self.name]
 
         values = getattr(pau, self.attribute)
-        setattr(pau, self.attribute, tuple((p for p in values if p != name)))
+        setattr(pau, self.attribute,
+                tuple((p for p in values if p != self.name)))
         return True

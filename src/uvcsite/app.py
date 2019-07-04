@@ -4,7 +4,7 @@ import zope.authentication.interfaces
 import zope.pluggableauth
 
 import uvcsite.interfaces
-import uvcsite.plugins
+import uvcsite.plugins.panel
 import uvcsite.homefolder.homefolder
 
 
@@ -27,7 +27,7 @@ class Uvcsite(grok.Application, grok.Container):
 
     @property
     def plugins(self):
-        return uvcsite.plugins.PluginsPanel('plugins', self)
+        return uvcsite.plugins.panel.PluginsPanel('plugins', self)
 
     def __init__(self):
         super().__init__()

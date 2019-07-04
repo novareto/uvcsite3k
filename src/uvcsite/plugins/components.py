@@ -115,40 +115,36 @@ class Plugin(grok.GlobalUtility):
 class ComplexPlugin(Plugin):
     grok.baseclass()
 
-    subplugins = None  # dict
+    subplugins = None  # tuple
 
     def dispatch(self, action, site):
         errors = []
-        for sp in self.subplugins.values():
+        for sp in self.subplugins:
             try:
                 method = getattr(sp, action, None)
                 if method is not None:
                     _ = method(site)
-            except uvcsite.plugins.PluginError as exc:
+            except PluginError as exc:
                 errors.extend(exc.messages)
 
         if errors:
-            raise uvcsite.plugins.PluginError(
-                u'`%s` encountered errors.' % action, *errors)
+            raise PluginError(f'`{action}` encountered errors.', *errors)
 
-        return uvcsite.plugins.Result(
+        return Result(
             value=u'`%s` was successful.' % action,
-            type=uvcsite.plugins.ResultTypes.MESSAGE,
+            type=flags.ResultTypes.MESSAGE,
             redirect=True)
 
     @property
     def status(self):
-        statuses = [sp.status for sp in self.subplugins.values()]
+        statuses = [sp.status for sp in self.subplugins]
         states = set((s.state for s in statuses))
         if len(states) > 1:
-            status = uvcsite.plugins.Status(
-                state=flags.States.INCONSISTANT)
+            status = Status(state=flags.States.INCONSISTANT)
         elif flags.States.INSTALLED in states:
-            status = uvcsite.plugins.Status(
-                state=flags.States.INSTALLED)
+            status = Status(state=flags.States.INSTALLED)
         else:
-            status = uvcsite.plugins.Status(
-                state=flags.States.NOT_INSTALLED)
+            status = Status(state=flags.States.NOT_INSTALLED)
 
         for s in statuses:
             if s.infos:

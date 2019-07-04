@@ -30,6 +30,7 @@ class ILoginForm(zope.interface.Interface):
         title=_("TextLine"),
         required=False)
 
+
 class Login(Form):
     """A very basic implementation of a login form.
     """
@@ -42,6 +43,7 @@ class Login(Form):
     form_name = _("Login form")
 
     fields = Fields(ILoginForm)
+    fields['camefrom'].mode = 'hidden'
     for field in fields:
         field.prefix = ""
 

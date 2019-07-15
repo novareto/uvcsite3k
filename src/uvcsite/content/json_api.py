@@ -69,34 +69,20 @@ class ContentRest(grok.REST):
         return serialize(schema, context)
 
 
-class IJSONSerializer(Interface):
-    """ Base Serialzer for IContent Objects
+class ISerializer(Interface):
+    """Serializer for IContent Objects
     """
-
-    def work(payload, interface, errors):
-        """ Worker which populates self.context
-            with the contents of the payload and
-            with the help of interface
+    def __call__():
+        """Document me
         """
 
 
-@implementer(IJSONSerializer)
-class DefaultSerializer(grok.Adapter):
+@implementer(ISerializer)
+class DefaultJSONSerializer(grok.Adapter):
     """ Default Serializer for IContent
     """
+    grok.name('application/json')
     grok.context(uvcsite.content.interfaces.IContent)
 
-    def work(self, payload, interface, errors):
-        try:
-            deserialize(payload, interface, self.context)
-        except Exception as e:  # Here should be a DeserializeError
-            for field, (exception, element) in e.field_errors.items():
-                error = dict(
-                    field=field.__name__,
-                    message=exception.__doc__,
-                )
-                errors.append(error)
-        try:
-            interface.validateInvariants(self.context)
-        except Invalid as e:
-            errors.append(dict(text="Invariant: %s" % e))
+    def __call__(self):
+        raise NotImplementedError

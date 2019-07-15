@@ -20,7 +20,10 @@ class Status:
         return str(self.state.value)
 
     def __repr__(self):
-        '<Status %s>' % self.state.value
+        return f'<Status "{self.state.value}">'
+
+    def __eq__(self, other):
+        return other.state == self.state and self.infos == other.infos
 
 
 class Result:
@@ -34,7 +37,13 @@ class Result:
         return str(self.type.value)
 
     def __repr__(self):
-        '<Result %s>' % self.type.value
+        return f'<Result "{self.type.value}" redirect={self.redirect}>'
+
+    def __eq__(self, other):
+        return (
+            other.type == self.type and
+            self.value == other.value and
+            self.redirect == other.redirect)
 
 
 class PluginError(Exception):

@@ -21,6 +21,7 @@ setup(name='uvcsite',
       install_requires=[
           'fanstatic',
           'grok',
+          'ddolmen.beaker',
           'grokcore.chameleon',
           'grokcore.startup',
           'grokui.admin',

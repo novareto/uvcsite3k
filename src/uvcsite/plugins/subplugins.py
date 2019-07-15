@@ -115,7 +115,7 @@ class PAUComponent:
 
         sm = getSiteManager()
         sm_available = self.name in sm if self.local else True
-
+        
         if pau_available and sm_available:
             return uvcsite.plugins.components.Status(
                 state=uvcsite.plugins.flags.States.INSTALLED)
@@ -123,7 +123,7 @@ class PAUComponent:
         if pau_available or sm_available:
             return uvcsite.plugins.components.Status(
                 state=uvcsite.plugins.flags.States.INCONSISTANT)
-
+        
         return uvcsite.plugins.components.Status(
             state=uvcsite.plugins.flags.States.NOT_INSTALLED)
 

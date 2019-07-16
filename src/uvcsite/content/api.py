@@ -8,14 +8,6 @@ from lxml.builder import E
 from zope.interface import Invalid, Interface, implementer
 
 
-def serialize_to_tree(*args):
-    pass
-
-
-def deserialize(*args):
-    pass
-
-
 class RestLayer(grok.IRESTLayer):
     """ Layer for Rest Access"""
     grok.restskin('api')
@@ -80,36 +72,12 @@ class ContentRest(grok.REST):
             encoding='UTF-8', pretty_print=True)
 
 
-class ISerializer(Interface):
-    """ Base Serialzer for IContent Objects
-    """
-
-    def work(payload, interface, errors):
-        """ Worker which populates self.context
-            with the contents of the payload and
-            with the help of interface
-        """
-
-
-@implementer(ISerializer)
-class DefaultSerializer(grok.Adapter):
+@implementer(uvcsite.content.interfaces.ISerializer)
+class DefaultXMLSerializer(grok.Adapter):
     """ Default Serializer for IContent
     """
+    grok.name('application/xml')
     grok.context(uvcsite.content.interfaces.IContent)
 
-    def work(self, payload, interface, errors):
-        try:
-            deserialize(payload, interface, self.context)
-        except Exception as e:  # Here should be a DeserializeError
-            for field, (exception, element) in e.field_errors.items():
-                error = etree.Element(
-                    'error',
-                    field=field.__name__,
-                    message=exception.__doc__,
-                )
-                error.append(element)
-                errors.append(error)
-        try:
-            interface.validateInvariants(self.context)
-        except Invalid as e:
-            errors.append(etree.Element('error', text="Invariant: %s" % e))
+    def __call__(self):
+        raise NotImplementedError('Implement your own.')

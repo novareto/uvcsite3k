@@ -69,15 +69,7 @@ class ContentRest(grok.REST):
         return serialize(schema, context)
 
 
-class ISerializer(Interface):
-    """Serializer for IContent Objects
-    """
-    def __call__():
-        """Document me
-        """
-
-
-@implementer(ISerializer)
+@implementer(uvcsite.content.interfaces.ISerializer)
 class DefaultJSONSerializer(grok.Adapter):
     """ Default Serializer for IContent
     """
@@ -85,4 +77,4 @@ class DefaultJSONSerializer(grok.Adapter):
     grok.context(uvcsite.content.interfaces.IContent)
 
     def __call__(self):
-        raise NotImplementedError
+        raise NotImplementedError('Implement your own.')

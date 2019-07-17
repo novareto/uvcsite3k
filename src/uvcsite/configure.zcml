@@ -12,6 +12,7 @@
   <grok:grok package=".homefolder" />
   <grok:grok package=".app" />
   <grok:grok package=".permissions" />
+  <grok:grok package=".cataloging" />
 
   <include package="uvcsite" file="principals.zcml" />
   <include package="zope.pluggableauth" />

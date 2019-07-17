@@ -78,7 +78,7 @@ class Cataloger:
         indexes = list(catalog.keys())
         return {
             'Plugin': self.title,
-            'Indexes': ', '.join(indexes),
+            'Indexes': indexes,
             'Catalog name': catalog_name,
             'Number of documents': catalog[indexes[0]].documentCount(),
         }

@@ -5,7 +5,7 @@ import zope.component
 import uvcsite.browser
 
 import zope.schema
-from zeam.form.base import FAILURE
+from zeam.form.base import FAILURE, Actions, Action
 from zope.component import getMultiAdapter
 from zope.location import Location, LocationProxy
 from zope.container.interfaces import IReadContainer
@@ -17,6 +17,36 @@ from uvcsite.plugins.components import Result, IPlugin, IComplexPlugin
 
 
 grok.templatedir('templates')
+
+
+class PluginAction(Action):
+
+    prefix = "plugin"
+
+    def __init__(self, callback, title, states):
+        self.states = {States(s) for s in states}  # idempotent
+        self.callback = callback
+        Action.__init__(
+            self, title=title, identifier=callback.__name__)
+
+    def available(self, form):
+        plugin = form.getContent()
+        return plugin.status.state in self.states
+
+    def __call__(self, form):
+        """Form processing method, used in browser-land.
+        """
+        site = grok.getApplication()
+        content = form.getContent()
+        try:
+            result = self.callback(content, site)
+            assert isinstance(result, Result)
+            return result
+        except PluginError as exc:
+            form.errors = Errors(*[
+                Error(title=error, identifier=self.identifier)
+                for error in exc.messages])
+        return FAILURE
 
 
 @zope.interface.implementer(IReadContainer, IDCDescriptiveProperties)
@@ -107,10 +137,12 @@ class PluginOverview(uvcsite.browser.Form):
     prefix = ""
     fields = uvcsite.browser.Fields()
     needs_fontawesome = True
-
+        
     @property
     def actions(self):
-        return self.context.actions
+        return Actions(*(
+            PluginAction(callback, title, states) for title, (callback, states)
+            in self.context.actions.items()))
 
     def updateForm(self):
         form, action, result = self.updateActions()

@@ -28,9 +28,7 @@ class CatalogPlugin(uvcsite.plugins.subplugins.Cataloger,
 
     fa_icon = 'book'
     title = u"Generic catalog"
-    description=(
-        u"Cataloging capabilities for searching "
-        + u"and sorting items efficiently")
+    description = "Cataloging capabilities for efficient lookups and sorting"
 
     def __init__(self):
         self.catalog = uvcsite.cataloging.catalogs.WorkflowCatalog

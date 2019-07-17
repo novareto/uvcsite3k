@@ -1,9 +1,13 @@
 import unittest
+from grokcore.component.testing import grok_component
 import zope.interface.verify
+
 import uvcsite.interfaces
 import uvcsite.testing
 import uvcsite.plugins.flags
 import uvcsite.plugins.components
+import uvcsite.plugins.panel
+import uvcsite.plugins.tests.fixtures.plugins
 
 
 class TestPluginsComponents(unittest.TestCase):
@@ -63,7 +67,9 @@ class TestPlugins(unittest.TestCase):
 
     def setUp(self):
         self.app = self.layer.create_application('app')
-
+        grok_component('Mockup',
+                       uvcsite.plugins.tests.fixtures.plugins.MockPlugin)
+        
     def test_simple_plugin(self):
         plugin = uvcsite.plugins.components.Plugin()
         self.assertEqual(None, plugin.title)
@@ -73,3 +79,38 @@ class TestPlugins(unittest.TestCase):
         self.assertEqual(None, plugin.actions)
         self.assertTrue(zope.interface.verify.verifyObject(
             uvcsite.plugins.components.IPlugin, plugin))
+
+    def test_plugins_panel(self):
+        # Panel exists and is of the right type
+        panel = self.app.plugins
+        self.assertTrue(isinstance(panel, uvcsite.plugins.panel.PluginsPanel))
+
+        # Iterator behavior
+        plugins = list(panel)
+        self.assertTrue(3, len(plugins))  # auth, catalog, mockup
+
+        # Containerish behavior
+        self.assertTrue('mockup' in panel)
+
+        # Accessors
+        self.assertIsNone(panel.get('Does not exist'))
+        plugin = panel.get('mockup')
+        self.assertIsNotNone(plugin)
+        self.assertEqual(plugin, panel['mockup'])
+        self.assertTrue(('mockup', plugin) in plugins)
+
+    def test_plugin_actions(self):
+        plugin = self.app.plugins.get('mockup')
+        self.assertEqual(2, len(plugin.actions))
+        self.assertEqual(['Text', 'JSON'], list(plugin.actions.keys()))
+
+        some_text, states = plugin.actions['Text']
+        result = some_text(plugin, self.app)
+        self.assertEqual(uvcsite.plugins.components.Result, result.__class__)
+        self.assertEqual('Magnificent text.', result.value)
+        
+    def test_plugin_status(self):
+        plugin = self.app.plugins.get('mockup')
+        not_installed = uvcsite.plugins.components.Status(
+            state=uvcsite.plugins.flags.States.NOT_INSTALLED)
+        self.assertEqual(not_installed, plugin.status)

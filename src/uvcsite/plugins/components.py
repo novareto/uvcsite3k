@@ -2,8 +2,9 @@ import sys
 import grok
 import zope.interface
 import zope.component
+import collections
 
-from zeam.form.base import Errors, Error, Actions, Action, FAILURE
+from zeam.form.base import Errors, Error, Action, FAILURE
 from zope.dublincore.interfaces import IDCDescriptiveProperties
 
 import uvcsite.plugins
@@ -23,8 +24,8 @@ class Status:
         return f'<Status "{self.state.value}">'
 
     def __eq__(self, other):
-        return other.state == self.state and self.infos == other.infos
-
+        return (other.__class__ == self.__class__ and
+                other.state == self.state and self.infos == other.infos)
 
 class Result:
 
@@ -40,10 +41,10 @@ class Result:
         return f'<Result "{self.type.value}" redirect={self.redirect}>'
 
     def __eq__(self, other):
-        return (
-            other.type == self.type and
-            self.value == other.value and
-            self.redirect == other.redirect)
+        return ((other.__class__ == self.__class__ and
+                 other.type == self.type and
+                 self.value == other.value and
+                 self.redirect == other.redirect))
 
 
 class PluginError(Exception):
@@ -66,34 +67,6 @@ class IComplexPlugin(IPlugin):
     subplugins = zope.interface.Attribute('Subplugins')
 
 
-class PluginAction(Action):
-
-    prefix = "plugin"
-
-    def __init__(self, callback, title, states):
-        self.states = states
-        self.callback = callback
-        Action.__init__(
-            self, title=title, identifier=callback.__name__)
-
-    def available(self, form):
-        plugin = form.getContent()
-        return plugin.status.state in self.states
-
-    def __call__(self, form):
-        site = grok.getApplication()
-        content = form.getContent()
-        try:
-            result = self.callback(content, site)
-            assert isinstance(result, Result)
-            return result
-        except PluginError as exc:
-            form.errors = Errors(*[
-                Error(title=error, identifier=self.identifier)
-                for error in exc.messages])
-        return FAILURE
-
-
 def plugin_action(title, *valid_states):
     if not valid_states:
         valid_states = flags.States
@@ -101,9 +74,8 @@ def plugin_action(title, *valid_states):
     def callback(method):
         frame = sys._getframe(1)
         f_locals = frame.f_locals
-        actions = f_locals.setdefault('actions', Actions())
-        action = PluginAction(method, title, valid_states)
-        actions.append(action)
+        actions = f_locals.setdefault('actions', collections.OrderedDict())
+        actions[title] = (method, valid_states)
         return method
 
     return callback

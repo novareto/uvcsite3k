@@ -7,16 +7,21 @@ import zope.catalog
 from zope.intid.interfaces import IIntIds
 
 
-def recatalog_app(app, items_iterator):
+def recatalog_app(app, items_iterator, size=3000):
     zope.component.hooks.setSite(app)
     ids = zope.component.getUtility(IIntIds)
     catalogs = list(
         zope.component.getUtilitiesFor(zope.catalog.interfaces.ICatalog))
-    for obj in items_iterator(app):
-        for name, catalog in catalogs:
-            id = ids.queryId(obj)
-            if id is not None:
-                catalog.index_doc(id, obj)
+    counter = 0
+    with transaction.manager as tr:
+        for obj in items_iterator(app):
+            counter += 1
+            for name, catalog in catalogs:
+                id = ids.queryId(obj)
+                if id is not None:
+                    catalog.index_doc(id, obj)
+            if counter % size:
+                tr.commit()
     zope.component.hooks.setSite()
 
 

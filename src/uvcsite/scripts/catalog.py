@@ -20,7 +20,7 @@ def recatalog_app(app, items_iterator, size=3000):
                 id = ids.queryId(obj)
                 if id is not None:
                     catalog.index_doc(id, obj)
-            if counter % size:
+            if not counter % size:
                 tr.commit()
     zope.component.hooks.setSite()
 

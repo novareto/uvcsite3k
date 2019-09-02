@@ -9,15 +9,14 @@ import zope.sendmail.delivery
 import zope.sendmail.interfaces
 import zope.sendmail.mailer
 import zope.sendmail.queue
-import email.MIMEText
-import email.Header
 
-
-from email.MIMEBase import MIMEBase
-from email import Encoders
+import email.encoders
+from email.mime.base import MIMEBase
 from email.mime.multipart import MIMEMultipart
-from email.MIMEText import MIMEText
-from email.Utils import COMMASPACE
+from email.mime.text import MIMEText
+
+
+COMMASPACE = ', '
 
 
 config = zope.app.appsetup.product.getProductConfiguration('mailer')
@@ -67,7 +66,7 @@ def send_mail(sender, recipient, subject, body, file=None, filename=None):
         fn = fn[-1]
         part = MIMEBase('application', 'octet-stream')
         part.set_payload(open(file, 'rb').read())
-        Encoders.encode_base64(part)
+        email.encoders.encode_base64(part)
         part.add_header(
             'Content-Disposition',
             'attachment; filename=%s' % filename or fn

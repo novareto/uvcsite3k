@@ -33,6 +33,14 @@ site-definition ${site_zcml:output}
 # to do logging. Logfiles are setup in the debug.ini and deploy.ini files.
 </eventlog>
 
+<product-config mailer>
+    queue-path ${buildout:directory}/var/mailer-queue
+    hostname ${mailer:hostname}
+    port ${mailer:port}
+    username ${mailer:username}
+    password ${mailer:password}
+</product-config>
+
 devmode ${devmode}
 
 # Extra configuration lines can be added to zope_conf's extra option. Put for

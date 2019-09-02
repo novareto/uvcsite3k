@@ -14,11 +14,12 @@ from .interfaces import (
     ISpotMenu,
     IPersonalMenu,
     IQuickLinks,
+    IFooter,
 )
-from .components import Menu
 from zope.component import getMultiAdapter
 from zope.interface import Interface
 from zope.pagetemplate.interfaces import IPageTemplate
+from uvcsite.browser.layout.menu import Menu, IMenu
 
 
 grok.templatedir("templates")
@@ -26,10 +27,17 @@ grok.templatedir("templates")
 
 class GlobalMenu(Menu):
     grok.implements(IGlobalMenu)
+    grok.provides(IMenu)
     grok.name("globalmenu")
 
-from uvcsite.browser.layout.menu import Menu as NM, IMenu
-class PersonalPreferences(NM):
+
+class FooterMenu(Menu):
+    grok.implements(IFooter)
+    grok.provides(IMenu)
+    grok.name("footermenu")
+
+
+class PersonalPreferences(Menu):
     grok.implements(IPersonalPreferences)
     grok.provides(IMenu)
     grok.name("personalpreferences")
@@ -37,25 +45,32 @@ class PersonalPreferences(NM):
 
 class DocumentActionsMenu(Menu):
     grok.implements(IDocumentActions)
+    grok.provides(IMenu)
     grok.name("documentactions")
 
 
 class ExtraViews(Menu):
     grok.implements(IExtraViews)
-    grok.context(Interface)
+    grok.provides(IMenu)
     grok.name("extraviews")
 
 
 class SpotMenu(Menu):
     grok.implements(ISpotMenu)
+    grok.provides(IMenu)
     grok.name("spotmenu")
 
 
-class PersonalMenu(NM):
+class PersonalMenu(Menu):
     grok.implements(IPersonalMenu)
     grok.provides(IMenu)
-    grok.context(Interface)
     grok.name("personal_menu")
+
+
+class QuickLinks(Menu):
+    grok.implements(IQuickLinks)
+    grok.provides(IMenu)
+    grok.name("quicklinks")
 
 
 class PersonalMenuRenderer(uvcsite.browser.layout.menu.MenuRenderer):
@@ -64,12 +79,16 @@ class PersonalMenuRenderer(uvcsite.browser.layout.menu.MenuRenderer):
 
     bound_menus = ('personal_menu', "personalpreferences")
 
-    def update(self):
-        super(PersonalMenuRenderer, self).update()
-        print(self.menus)
+
+class GlobalMenuRenderer(uvcsite.browser.layout.menu.MenuRenderer):
+    grok.context(Interface)
+    grok.name("globalmenu")
+
+    bound_menus = ("globalmenu",)
 
 
-class QuickLinks(NM):
-    grok.implements(IQuickLinks)
-    grok.provides(IMenu)
-    grok.name("quicklinks")
+class FooterMenuRenderer(uvcsite.browser.layout.menu.MenuRenderer):
+    grok.context(Interface)
+    grok.name("footer")
+
+    bound_menus = ("footermenu",)

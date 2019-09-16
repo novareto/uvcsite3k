@@ -44,7 +44,6 @@ class PersonalPanelTemplate(PageTemplate):
 class PersonalPanelEntry(uvcsite.browser.layout.menu.MenuItem):
     grok.name("personalpanelentry")
     grok.require("zope.View")
-    grok.context(Interface)
     grok.order(35)
 
     grok.title(u"Meine Einstellungen")

@@ -5,6 +5,7 @@
 import grok
 import uvcsite
 import urllib
+import uvcsite.browser.layout.menu
 
 from uvcsite.interfaces import IHomeFolder
 from zope.interface import Interface
@@ -21,7 +22,6 @@ grok.templatedir("templates")
 class PersonalPanel(uvcsite.browser.Page):
     """Page for Personal Properties
     """
-
     grok.name("personalpanelview")
     grok.order(35)
     grok.require("zope.View")
@@ -45,15 +45,10 @@ class PersonalPanelEntry(uvcsite.browser.layout.menu.MenuItem):
     grok.name("personalpanelentry")
     grok.require("zope.View")
     grok.order(35)
+    uvcsite.browser.layout.menu.menu(
+        uvcsite.browser.layout.slots.interfaces.IPersonalPreferences)
 
-    grok.title(u"Meine Einstellungen")
-    title = u"Meine Einstellungen"
-    grok.adapts(
-        Interface,
-        Interface,
-        Interface,
-        uvcsite.browser.layout.slots.interfaces.IPersonalPreferences,
-    )
+    title = "Meine Einstellungen"
 
     def url(self):
         principal = self.request.principal
@@ -69,15 +64,11 @@ class PersonalPanelEntry(uvcsite.browser.layout.menu.MenuItem):
 class UserName(uvcsite.browser.layout.menu.MenuItem):
     grok.name("username")
     grok.title("USERSNAME")
-    grok.context(Interface)
-    grok.adapts(
-        Interface,
-        Interface,
-        Interface,
-        uvcsite.browser.layout.slots.interfaces.IPersonalPreferences,
-    )
+    uvcsite.browser.layout.menu.menu(
+        uvcsite.browser.layout.slots.interfaces.IPersonalPreferences)
     grok.order(10)
     grok.require("zope.View")
+
     action = ""
 
     @property
@@ -91,16 +82,12 @@ class UserName(uvcsite.browser.layout.menu.MenuItem):
 class MeinOrdner(uvcsite.browser.layout.menu.MenuItem):
     grok.context(Interface)
     grok.name("Mein Ordner")
-    grok.title("Mein Ordner")
-    grok.adapts(
-        Interface,
-        Interface,
-        Interface,
-        uvcsite.browser.layout.slots.interfaces.IPersonalPreferences,
-    )
     grok.order(20)
     grok.require("zope.View")
-    title = u"Mein Ordner"
+    uvcsite.browser.layout.menu.menu(
+        uvcsite.browser.layout.slots.interfaces.IPersonalPreferences)
+
+    title = "Mein Ordner"
 
     def url(self):
         principal = self.request.principal
@@ -112,18 +99,14 @@ class MeinOrdner(uvcsite.browser.layout.menu.MenuItem):
         return ""
 
 
-
 class Mitbenutzerverwaltung(uvcsite.browser.layout.menu.MenuItem):
     grok.context(IHomeFolder)
-    grok.name("Mitbenutzerverwaltung")
-    grok.adapts(
-        Interface,
-        Interface,
-        Interface,
-        uvcsite.browser.layout.slots.interfaces.IPersonalPreferences,
-    )
     grok.order(30)
     grok.require("uvc.ManageCoUsers")
+    grok.name("Mitbenutzerverwaltung")
+    uvcsite.browser.layout.menu.menu(
+        uvcsite.browser.layout.slots.interfaces.IPersonalPreferences)
+
     title = u"Mitbenutzerverwaltung"
 
     def url(self):

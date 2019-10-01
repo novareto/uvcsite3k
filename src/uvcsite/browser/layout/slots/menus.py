@@ -17,7 +17,7 @@ from .interfaces import (
     IFooter,
 )
 from zope.component import getMultiAdapter
-from zope.interface import Interface
+from zope.interface import Interface, implementer
 from zope.pagetemplate.interfaces import IPageTemplate
 from uvcsite.browser.layout.menu import Menu, IMenu
 
@@ -25,51 +25,43 @@ from uvcsite.browser.layout.menu import Menu, IMenu
 grok.templatedir("templates")
 
 
+@implementer(IGlobalMenu)
 class GlobalMenu(Menu):
-    grok.implements(IGlobalMenu)
-    grok.provides(IMenu)
     grok.name("globalmenu")
 
 
+@implementer(IFooter)
 class FooterMenu(Menu):
-    grok.implements(IFooter)
-    grok.provides(IMenu)
     grok.name("footermenu")
 
 
+@implementer(IPersonalPreferences)
 class PersonalPreferences(Menu):
-    grok.implements(IPersonalPreferences)
-    grok.provides(IMenu)
     grok.name("personalpreferences")
 
 
+@implementer(IDocumentActions)
 class DocumentActionsMenu(Menu):
-    grok.implements(IDocumentActions)
-    grok.provides(IMenu)
     grok.name("documentactions")
 
 
+@implementer(IExtraViews)
 class ExtraViews(Menu):
-    grok.implements(IExtraViews)
-    grok.provides(IMenu)
     grok.name("extraviews")
 
 
+@implementer(ISpotMenu)
 class SpotMenu(Menu):
-    grok.implements(ISpotMenu)
-    grok.provides(IMenu)
     grok.name("spotmenu")
 
 
+@implementer(IPersonalMenu)
 class PersonalMenu(Menu):
-    grok.implements(IPersonalMenu)
-    grok.provides(IMenu)
     grok.name("personal_menu")
 
 
+@implementer(IQuickLinks)
 class QuickLinks(Menu):
-    grok.implements(IQuickLinks)
-    grok.provides(IMenu)
     grok.name("quicklinks")
 
 

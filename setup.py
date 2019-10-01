@@ -43,6 +43,7 @@ setup(name='uvcsite',
           'zope.publisher',
           'zope.sendmail',
           'zope.traversing',
+          'ZEO',
       ],
       entry_points={
           'fanstatic.libraries': [

@@ -1,7 +1,8 @@
 <configure xmlns="http://namespaces.zope.org/zope"
+           xmlns:browser="http://namespaces.zope.org/browser"
            xmlns:grok="http://namespaces.zope.org/grok">
   <include package="grok" />
-  <includeDependencies package="." />
+  <includeDependencies package="." /> 
   <include package=".auth" />
   <include package=".extranetmembership" />
   <include package=".content" />

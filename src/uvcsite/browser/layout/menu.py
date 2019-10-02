@@ -63,6 +63,28 @@ class MenuItem:
     def available(self):
         return True
 
+    @property
+    def selected(self):
+        request_url = self.request.getURL()
+        url = self.url()
+        normalized_action = url
+        if not url:
+            return False
+        if url.startswith('@@'):
+            normalized_action = self.action[2:]
+        if request_url.endswith('/'+normalized_action):
+            return True
+        if request_url.endswith('/++view++'+normalized_action):
+            return True
+        if request_url.endswith('/@@'+normalized_action):
+            return True
+        if request_url == url:
+            return True
+        if request_url.endswith('/@@index'):
+            if request_url[:-8] == url:
+                return True
+        return False
+
 
 @implementer(IMenu)
 class Menu(collections.abc.Iterable):

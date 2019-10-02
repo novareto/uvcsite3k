@@ -30,7 +30,6 @@ class MenuGrokker(martian.ClassGrokker):
                 permission, **kw):
         # This will be used to support __name__ on the viewlet manager
         factory.__view_name__ = name
-        print('Menu', context, layer, view, name)
         config.action(
             discriminator=('Menu', context, layer, view, name),
             callable=grokcore.component.provideAdapter,
@@ -41,7 +40,6 @@ class MenuGrokker(martian.ClassGrokker):
             discriminator=('protectName', factory),
             callable=make_checker,
             args=(factory, factory, permission, ['available']))
-        
         return True
 
 
@@ -65,7 +63,6 @@ class MenuItemGrokker(martian.ClassGrokker):
                 permission, **kw):
         # This will be used to support __name__ on the viewlet manager
         factory.__view_name__ = name
-        print('MenuItem', context, layer, view, menu, name)
         config.action(
             discriminator=('MenuItem', context, layer, view, menu, name),
             callable=grokcore.component.provideAdapter,

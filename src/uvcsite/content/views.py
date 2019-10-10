@@ -55,13 +55,11 @@ class Index(uvcsite.browser.TablePage):
         del item.__parent__[item.__name__]
 
     def getAddLinkUrl(self):
-        homefolder = uvcsite.interfaces.IHomeFolder(self.request)
-        url = grok.url(self.request, homefolder)
+        url = grok.url(self.request, self.context)
         return f"{url}/@@add"
 
     def getAddTitle(self):
-        return u"BLAB"
-        return self.context.getContentName()
+        return self.context.title
 
     def renderCell(self, item, column, colspan=0):
         from z3c.table import interfaces

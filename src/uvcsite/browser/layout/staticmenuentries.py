@@ -102,10 +102,10 @@ class MeinOrdner(uvcsite.browser.layout.menu.MenuItem):
 class Mitbenutzerverwaltung(uvcsite.browser.layout.menu.MenuItem):
     grok.context(IHomeFolder)
     grok.order(30)
-    grok.require("uvc.ManageCoUsers")
+    #grok.require("uvc.ManageCoUsers")
     grok.name("Mitbenutzerverwaltung")
     uvcsite.browser.layout.menu.menu(
-        uvcsite.browser.layout.slots.interfaces.IPersonalPreferences)
+        uvcsite.browser.layout.slots.interfaces.IPersonalMenu)
 
     title = u"Mitbenutzerverwaltung"
 

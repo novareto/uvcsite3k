@@ -69,7 +69,7 @@ class PersonalMenuRenderer(uvcsite.browser.layout.menu.MenuRenderer):
     grok.context(Interface)
     grok.name("personalmenu")
 
-    bound_menus = ('personal_menu', "personalpreferences")
+    bound_menus = ('personal_menu', )
 
 
 class GlobalMenuRenderer(uvcsite.browser.layout.menu.MenuRenderer):

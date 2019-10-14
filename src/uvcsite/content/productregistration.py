@@ -23,12 +23,15 @@ class ProductRegistration(ABC, grok.Subscription):
     grok.baseclass()
 
     key = None
-    title = u""
 
     @abstractmethod
     def available(self) -> bool:
         """Availability computation.
         """
+
+    @property
+    def title(self):
+        return grok.title.bind().get(self)
 
     @abstractmethod
     def factory(self, *args, **kwargs):

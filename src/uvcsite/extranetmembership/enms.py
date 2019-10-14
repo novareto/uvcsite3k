@@ -3,10 +3,13 @@
 # cklinger@novareto.de
 
 import grok
+import collections.abc
+
 import uvcsite.browser
 import uvcsite.browser.layout.slots.interfaces
 import uvcsite.browser.layout.menu
 
+from grokcore.component.interfaces import IContext
 from grokcore.chameleon.components import ChameleonPageTemplateFile
 from uvcsite import uvcsiteMF as _
 from uvcsite.extranetmembership.interfaces import (
@@ -23,7 +26,6 @@ from zope.interface import implementer
 from zope.dublincore.interfaces import IDCDescriptiveProperties
 
 
-
 grok.templatedir('templates')
 
 
@@ -31,7 +33,7 @@ class IOnTheFlyUser(Interface):
     pass
 
 
-@implementer(IDCDescriptiveProperties)
+@implementer(IContext, IDCDescriptiveProperties)
 class ENMSLister(Location):
 
     title = "Mitbenutzerverwaltung"
@@ -80,6 +82,7 @@ class ENMSLister(Location):
         return self[az] or default
 
 
+@implementer(IContext)
 class ENMSHomeFolderTraverser(grok.MultiAdapter):
     grok.context(IHomeFolder)
     grok.name('enms')
@@ -99,7 +102,7 @@ class ENMSHomeFolderTraverser(grok.MultiAdapter):
 
 class IndexRedirector(grok.View):
     grok.context(ENMSHomeFolderTraverser)
-    grok.name('index.html')
+    grok.name('index')
 
     def render(self):
         self.redirect(self.url(self.context.context, '++enms++'))
@@ -113,7 +116,7 @@ class ENMSListerTraverser(grok.Traverser):
 
 
 class ENMS(uvcsite.browser.Page):
-    grok.name('index.html')
+    grok.name('index')
     grok.title('Mitbenutzerverwaltung')
     grok.context(ENMSLister)
     grok.require('uvc.ManageCoUsers')
@@ -133,7 +136,8 @@ class ENMS(uvcsite.browser.Page):
                 link = self.url(user)
             else:
                 value = user.get(fieldname, '')
-            if hasattr(value, '__iter__'):
+            if (isinstance(value, collections.abc.Iterable) and
+                not isinstance(value, (str, bytes))):
                 multi = True
             yield {'value': value, 'multi': multi, 'link': link}
 

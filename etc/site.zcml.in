@@ -3,12 +3,5 @@
     xmlns="http://namespaces.zope.org/zope"
     xmlns:browser="http://namespaces.zope.org/browser" >
   <include package="uvcsite" />
-  <include package="ukt.theme" />
-  <include package="ukt.auth" />
-  <include package="ukt.start" />
-  ${zope_conf:extra}
-  <browser:defaultSkin name="ukt.theme" />
-  <browser:beakerSession
-      secret="Test"
-      validate_key="Some key" />
+  ${site_zcml:extra}
 </configure>

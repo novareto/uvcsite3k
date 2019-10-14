@@ -7,11 +7,12 @@ import base64
 import urllib
 import grokcore.component as grok
 from uvcsite import uvcsiteMF as _
-from zope.interface import Interface
+from zope.interface import Interface, implementer
 from zope.schema import ASCIILine
 from zope.pluggableauth.interfaces import ICredentialsPlugin
 from zope.pluggableauth.plugins.session import SessionCredentialsPlugin
 from zope.publisher.interfaces.http import IHTTPRequest
+from zope.session.interfaces import ISession
 
 
 class ICookieCredentials(Interface):
@@ -25,10 +26,10 @@ class ICookieCredentials(Interface):
     )
 
 
+@implementer(ICredentialsPlugin, ICookieCredentials)
 class CookiesCredentials(grok.GlobalUtility, SessionCredentialsPlugin):
     grok.name("cookies")
     grok.provides(ICredentialsPlugin)
-    grok.implements(ICredentialsPlugin, ICookieCredentials)
 
     # ILocation's information
     __parent__ = None
@@ -68,9 +69,13 @@ class CookiesCredentials(grok.GlobalUtility, SessionCredentialsPlugin):
         else:
             return
 
-        return {"login": login.decode('utf-8'), "password": password.decode('utf-8')}
+        return {"login": login.decode('utf-8'),
+                "password": password.decode('utf-8')}
 
     def logout(self, request):
         if not IHTTPRequest.providedBy(request):
             return
         request.response.expireCookie(self.cookie_name, path="/")
+        session = ISession(request, None)
+        if session is not None:
+            session.delete()

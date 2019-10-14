@@ -1,15 +1,18 @@
 import grok
 import zope.schema
 import zope.interface
+import zope.component
 
+from zope.authentication.interfaces import (
+    ILogout, IUnauthenticatedPrincipal, IAuthentication)
 from zope.traversing.browser.absoluteurl import absoluteURL
-from zope.authentication.interfaces import IUnauthenticatedPrincipal
 from zope.location.interfaces import ILocation
 
 from zeam.form.base import action, Fields
 from uvcsite.browser import Form
 from zeam.form.base.markers import SUCCESS, FAILURE
 from uvcsite import uvcsiteMF as _
+import uvcsite.utils.shorties
 import uvcsite.auth.interfaces
 from uvcsite.auth.event import UserLoggedInEvent
 
@@ -71,3 +74,16 @@ class Login(Form):
 
         self.redirect(camefrom)
         return SUCCESS
+
+
+class Logout(grok.View):
+    grok.context(zope.interface.Interface)
+    grok.require('zope.Public')
+    
+    def update(self):
+        if uvcsite.utils.shorties.isLoggedIn(self.request):
+            auth = zope.component.queryUtility(IAuthentication)
+            ILogout(auth).logout(self.request)
+
+    def render(self):
+        self.redirect(self.url(self.context))

@@ -110,6 +110,7 @@ class Mitbenutzerverwaltung(uvcsite.browser.layout.menu.MenuItem):
     title = u"Mitbenutzerverwaltung"
 
     def url(self):
+        import pdb; pdb.set_trace()
         principal = self.request.principal
         if IUnauthenticatedPrincipal.providedBy(principal):
             return

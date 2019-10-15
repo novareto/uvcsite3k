@@ -19,8 +19,9 @@ def vocabulary(terms):
 @grok.provider(IContextSourceBinder)
 def vocab_berechtigungen(context):
     principal = getPrincipal()
-    return SimpleVocabulary((
+    vocab = SimpleVocabulary([
         SimpleTerm(reg.key, reg.key, reg.title)
         for reg in get_product_registrations(
                 principal, discard_unavailable=True)
-    ))
+    ])
+    return vocab

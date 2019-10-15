@@ -7,61 +7,65 @@ from zope.schema import Choice
 from uvcsite.extranetmembership.interfaces import IUserManagement, IExtranetMember
 
 
+class User(dict):
+    pass
+
+
 USERS = [
-    {
-        "mnr": "0101010001",
-        "az": "00",
-        "passwort": "passwort",
-        "email": "ck@novareto.de",
-        "rollen": ["Adressbook"],
-    },
-    {
-        "mnr": "0202020002",
-        "az": "00",
-        "passwort": "passwort",
-        "email": "test@test.de",
-        "rollen": [],
-    },
-    {
-        "mnr": "0101010001-q",
-        "az": "-q",
-        "passwort": "passwort",
-        "email": "test@test.de",
-        "rollen": ["Adressbook"],
-    },
-    {
-        "mnr": "0101010001",
-        "az": "01",
-        "passwort": "passwort",
-        "email": "ck1@novareto.de",
-        "rollen": ["Adressbook"],
-    },
-    {
-        "mnr": "0101010001",
-        "az": "02",
-        "passwort": "passwort",
-        "email": "test@test.de",
-        "rollen": [],
-    },
-    {
-        "mnr": "0101010002",
-        "az": "02",
-        "passwort": "passwort",
-        "email": "test@test.de",
-    },
-    {
-        "mnr": "0101010002",
-        "az": "03",
-        "passwort": "passwort",
-        "email": "test@test.de",
-    },   
-    {
-        "mnr": "lars",
-        "az": "00",
-        "passwort": "passwort",
-        "email": "test@test.de",
-        "rollen": [],
-    }
+    User(
+        mnr="0101010001",
+        az="00",
+        passwort="passwort",
+        email="ck@novareto.de",
+        rollen=["Adressbook"],
+    ),
+    User(
+        mnr="0202020002",
+        az="00",
+        passwort="passwort",
+        email="test@test.de",
+        rollen=[]
+    ),
+    User(
+        mnr="0101010001-q",
+        az="-q",
+        passwort="passwort",
+        email="test@test.de",
+        rollen=["adrbook"],
+    ),
+    User(
+        mnr="0101010001",
+        az="01",
+        passwort="passwort",
+        email="ck1@novareto.de",
+        rollen=["Adressbook"],
+    ),
+    User(
+        mnr="0101010001",
+        az="02",
+        passwort="passwort",
+        email="test@test.de",
+        rollen=[]
+    ),
+    User(
+        mnr="0101010002",
+        az="02",
+        passwort="passwort",
+        email="test@test.de"
+    ),
+    User(
+        mnr="0101010002",
+        az="03",
+        passwort="passwort",
+        email="test@test.de"
+    ),
+    User(
+        mnr="lars",
+        az="00",
+        passwort="passwort",
+        email="test@test.de",
+        rollen=[]
+    ),
 ]
 
 
@@ -91,12 +95,11 @@ class UserManagement(grok.GlobalUtility):
     def addUser(self, **kwargs):
         """Adds a User"""
         mnr, az = kwargs["mnr"].split("-")
-        USERS.append(dict(
-            mnr=mnr,
-            az=az,
-            roles=kwargs["rollen"],
-            passwort=kwargs.get("passwort")
-        ))
+        USERS.append(
+            User(
+                mnr=mnr, az=az, roles=kwargs["rollen"], passwort=kwargs.get("passwort")
+            )
+        )
 
     def zerlegUser(self, mnr):
         ll = mnr.split("-")
@@ -128,10 +131,8 @@ class UserManagement(grok.GlobalUtility):
         ret = []
         for x in USERS:
             usr = "%s-%s" % (x["mnr"], x["az"])
-            ret.append(dict(
-                cn=usr, mnr=x["mnr"],
-                rollen=x.get("rollen", []),
-                az=x.get("az"))
+            ret.append(
+                User(cn=usr, mnr=x["mnr"], rollen=x.get("rollen", []), az=x.get("az"))
             )
         return ret
 

@@ -266,18 +266,6 @@ class ENMSUpdateUser(uvcsite.browser.Form):
         self.redirect(self.url(self.context.__parent__))
 
 
-class ChangePasswordMenu(uvcsite.browser.layout.menu.MenuItem):
-    grok.require('zope.View')
-    grok.adapts(Interface, Interface, Interface,
-                uvcsite.browser.layout.slots.interfaces.IPersonalMenu)
-    title = u"Passwort ändern"
-
-    @property
-    def url(self):
-        return self.view.url(
-            IHomeFolder(self.request.principal), 'changepassword')
-
-
 class ChangePassword(uvcsite.browser.Form):
     """A Form for updating a User in ENMS.
     """

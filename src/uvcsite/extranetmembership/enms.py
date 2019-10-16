@@ -167,14 +167,15 @@ class ENMSCreateUser(uvcsite.browser.Form):
 
     ignoreContent = False
 
+    mnr_template = ChameleonPageTemplateFile('templates/mnr.cpt')
+    
     @property
     def fields(self):
         return base.Fields(self.context.user_schema)
 
     def updateForm(self):
         super(ENMSCreateUser, self).updateForm()
-        self.fieldWidgets.get('form.field.mnr').template = (
-            ChameleonPageTemplateFile('templates/mnr.cpt'))
+        self.fieldWidgets.get('form.field.mnr').template = self.mnr_template
 
     def getNextNumber(self, groups):
         all_azs = []

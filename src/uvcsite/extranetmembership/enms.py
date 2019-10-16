@@ -29,7 +29,7 @@ from zope.dublincore.interfaces import IDCDescriptiveProperties
 grok.templatedir('templates')
 
 
-class IOnTheFlyUser(Interface):
+class IOnTheFlyUser(IContext):
     pass
 
 
@@ -190,11 +190,13 @@ class ENMSCreateUser(uvcsite.browser.Form):
         um = getUtility(IUserManagement)
         all_users = self.getNextNumber(um.getUserGroups(principal))
         user = principal + '-' + str(all_users).zfill(2)
-        rollen = self.context.__parent__.keys()
+        rollen = [x for x in self.context.__parent__.keys()]
+        print(rollen)
         return {'mnr': user, 'rollen': rollen}
 
     def update(self):
         data = self.getDefaultData()
+        print (data)
         self.setContentData(base.DictDataManager(data))
 
     @base.action(_("Anlegen"))
@@ -213,13 +215,13 @@ class ENMSCreateUser(uvcsite.browser.Form):
                 'uvc.Editor', data.get('mnr'))
         self.flash(_('Der Mitbenutzer wurde gespeichert'))
         principal = self.request.principal
-        homeFolder = IHomeFolder(principal).homeFolder
+        homeFolder = IHomeFolder(principal)
         self.redirect(self.url(homeFolder, '++enms++'))
 
 
 class ENMSUpdateUser(uvcsite.browser.Form):
     """ A Form for updating a User in ENMS"""
-    grok.name('index.html')
+    grok.name('index')
     grok.context(IOnTheFlyUser)
     grok.require('uvc.ManageCoUsers')
 
@@ -233,7 +235,9 @@ class ENMSUpdateUser(uvcsite.browser.Form):
         return base.Fields(self.context.__parent__.user_schema)
 
     def update(self):
-        self.setContentData(base.DictDataManager(self.context))
+        context = self.context
+        context['confirm'] = context['passwort']
+        self.setContentData(base.DictDataManager(context))
 
     def updateForm(self):
         super(ENMSUpdateUser, self).updateForm()
@@ -261,18 +265,6 @@ class ENMSUpdateUser(uvcsite.browser.Form):
         self.context.__parent__.delete(self.context['az'])
         self.flash(_('Der Mitbenutzer wurde entfernt.'))
         self.redirect(self.url(self.context.__parent__))
-
-
-class ChangePasswordMenu(uvcsite.browser.layout.menu.MenuItem):
-    grok.require('zope.View')
-    grok.adapts(Interface, Interface, Interface,
-                uvcsite.browser.layout.slots.interfaces.IPersonalMenu)
-    title = u"Passwort ändern"
-
-    @property
-    def url(self):
-        return self.view.url(
-            IHomeFolder(self.request.principal), 'changepassword')
 
 
 class ChangePassword(uvcsite.browser.Form):

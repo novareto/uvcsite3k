@@ -102,11 +102,17 @@ class Menu(collections.abc.Iterable):
         return True
     
     def __iter__(self):
-        for i in grokcore.component.sort_components((
-                e for name, e in getAdapters(
-                    (self, self.context, self.request, self.view), IMenuEntry)
-                if zope.security.canAccess(e, 'available') and e.available())):
-            yield i
+        entries = grokcore.component.sort_components((
+            e for name, e in getAdapters(
+                (self, self.context, self.request, self.view), IMenuEntry)))
+
+        for e in entries:
+            e.__parent__ = self
+            if zope.security.canAccess(e, 'available') and e.available():
+                yield e
+            else:
+                import pdb
+                pdb.set_trace()
 
     def update(self):
         self.entries = list(iter(self))
@@ -121,9 +127,11 @@ class MenuRenderer(grok.ContentProvider, collections.abc.Iterable):
         for name in self.bound_menus:
             menu = queryMultiAdapter(
                 (self.context, self.request, self.view), IMenu, name=name)
+            menu.__parent__ = self.view
             if menu is not None and zope.security.canAccess(menu, 'available'):
-                menu.update()
+                menu.update()                
                 yield name, menu
-
+                
+                
     def update(self):
         self.menus = collections.OrderedDict(iter(self))

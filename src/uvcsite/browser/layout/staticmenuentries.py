@@ -99,15 +99,32 @@ class MeinOrdner(uvcsite.browser.layout.menu.MenuItem):
         return ""
 
 
+class ChangePasswordMenu(uvcsite.browser.layout.menu.MenuItem):
+    grok.context(IHomeFolder)
+    #grok.require('zope.View')
+    grok.order(50)
+    grok.name('ChangePW')
+    uvcsite.browser.layout.menu.menu(
+        uvcsite.browser.layout.slots.interfaces.IPersonalMenu)
+
+    title = u"Passwort ändern"
+    icon = u"fas fa-lock-open"
+
+    def url(self):
+        return self.view.url(
+            IHomeFolder(self.request.principal), 'changepassword')
+
+
 class Mitbenutzerverwaltung(uvcsite.browser.layout.menu.MenuItem):
     grok.context(IHomeFolder)
     grok.order(30)
-    grok.require("uvc.ManageCoUsers")
+    #grok.require("uvc.ManageCoUsers")
     grok.name("Mitbenutzerverwaltung")
     uvcsite.browser.layout.menu.menu(
-        uvcsite.browser.layout.slots.interfaces.IPersonalPreferences)
+        uvcsite.browser.layout.slots.interfaces.IPersonalMenu)
 
     title = u"Mitbenutzerverwaltung"
+    icon = "fas fa-users"
 
     def url(self):
         principal = self.request.principal

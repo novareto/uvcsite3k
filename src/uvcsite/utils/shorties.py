@@ -13,6 +13,41 @@ from uvcsite.interfaces import IHomeFolder
 from zope.authentication.interfaces import IUnauthenticatedPrincipal
 
 
+def isLoggedIn(request):
+    return (not IUnauthenticatedPrincipal.providedBy(request.principal))
+
+
+def getHomeFolderUrl(request, suffix=""):
+    url = uvcsite.IGetHomeFolderUrl(request).getURL(type=suffix)
+    if url:
+        url = urllib.unquote(url)
+    return url
+
+
+def fmtDateTime(object, fmt="%d.%m.%Y %H:%M:%S"):
+    tz = pytz.timezone("Europe/Berlin")
+    return object.astimezone(tz).strftime(fmt)
+
+
+def fmtDate(p_date):
+    if p_date is None:
+        return ''
+    tz = pytz.timezone('Europe/Berlin')
+    if isinstance(p_date, datetime):
+        if p_date.tzinfo:
+            tz = p_date.tzinfo
+        p_date = datetime(p_date.year, p_date.month, p_date.day, tzinfo=tz)
+        return fmtDateTime(p_date, fmt='%d.%m.%Y')
+    if isinstance(p_date, date):
+        p_date = datetime(p_date.year, p_date.month, p_date.day, tzinfo=tz)
+    if isinstance(p_date, int):
+        p_date = str(p_date)
+    if isinstance(p_date, str):
+        p_date = datetime(
+            int(p_date[0:4]), int(p_date[4:6]), int(p_date[6:8]), tzinfo=tz)
+    return fmtDateTime(p_date, fmt='%d.%m.%Y')
+
+
 def getHomeFolder(request):
     principal = request.principal
     if IUnauthenticatedPrincipal.providedBy(principal):

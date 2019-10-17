@@ -3,10 +3,13 @@
 # cklinger@novareto.de
 
 import grok
+import collections.abc
+
 import uvcsite.browser
 import uvcsite.browser.layout.slots.interfaces
 import uvcsite.browser.layout.menu
 
+from grokcore.component.interfaces import IContext
 from grokcore.chameleon.components import ChameleonPageTemplateFile
 from uvcsite import uvcsiteMF as _
 from uvcsite.extranetmembership.interfaces import (
@@ -23,15 +26,14 @@ from zope.interface import implementer
 from zope.dublincore.interfaces import IDCDescriptiveProperties
 
 
-
 grok.templatedir('templates')
 
 
-class IOnTheFlyUser(Interface):
+class IOnTheFlyUser(IContext):
     pass
 
 
-@implementer(IDCDescriptiveProperties)
+@implementer(IContext, IDCDescriptiveProperties)
 class ENMSLister(Location):
 
     title = "Mitbenutzerverwaltung"
@@ -80,6 +82,7 @@ class ENMSLister(Location):
         return self[az] or default
 
 
+@implementer(IContext)
 class ENMSHomeFolderTraverser(grok.MultiAdapter):
     grok.context(IHomeFolder)
     grok.name('enms')
@@ -99,7 +102,7 @@ class ENMSHomeFolderTraverser(grok.MultiAdapter):
 
 class IndexRedirector(grok.View):
     grok.context(ENMSHomeFolderTraverser)
-    grok.name('index.html')
+    grok.name('index')
 
     def render(self):
         self.redirect(self.url(self.context.context, '++enms++'))
@@ -113,7 +116,7 @@ class ENMSListerTraverser(grok.Traverser):
 
 
 class ENMS(uvcsite.browser.Page):
-    grok.name('index.html')
+    grok.name('index')
     grok.title('Mitbenutzerverwaltung')
     grok.context(ENMSLister)
     grok.require('uvc.ManageCoUsers')
@@ -133,7 +136,8 @@ class ENMS(uvcsite.browser.Page):
                 link = self.url(user)
             else:
                 value = user.get(fieldname, '')
-            if hasattr(value, '__iter__'):
+            if (isinstance(value, collections.abc.Iterable) and
+                not isinstance(value, (str, bytes))):
                 multi = True
             yield {'value': value, 'multi': multi, 'link': link}
 
@@ -163,14 +167,15 @@ class ENMSCreateUser(uvcsite.browser.Form):
 
     ignoreContent = False
 
+    mnr_template = ChameleonPageTemplateFile('templates/mnr.cpt')
+    
     @property
     def fields(self):
         return base.Fields(self.context.user_schema)
 
     def updateForm(self):
         super(ENMSCreateUser, self).updateForm()
-        self.fieldWidgets.get('form.field.mnr').template = (
-            ChameleonPageTemplateFile('templates/mnr.cpt'))
+        self.fieldWidgets.get('form.field.mnr').template = self.mnr_template
 
     def getNextNumber(self, groups):
         all_azs = []
@@ -185,11 +190,13 @@ class ENMSCreateUser(uvcsite.browser.Form):
         um = getUtility(IUserManagement)
         all_users = self.getNextNumber(um.getUserGroups(principal))
         user = principal + '-' + str(all_users).zfill(2)
-        rollen = self.context.__parent__.keys()
+        rollen = [x for x in self.context.__parent__.keys()]
+        print(rollen)
         return {'mnr': user, 'rollen': rollen}
 
     def update(self):
         data = self.getDefaultData()
+        print (data)
         self.setContentData(base.DictDataManager(data))
 
     @base.action(_("Anlegen"))
@@ -208,13 +215,13 @@ class ENMSCreateUser(uvcsite.browser.Form):
                 'uvc.Editor', data.get('mnr'))
         self.flash(_('Der Mitbenutzer wurde gespeichert'))
         principal = self.request.principal
-        homeFolder = IHomeFolder(principal).homeFolder
+        homeFolder = IHomeFolder(principal)
         self.redirect(self.url(homeFolder, '++enms++'))
 
 
 class ENMSUpdateUser(uvcsite.browser.Form):
     """ A Form for updating a User in ENMS"""
-    grok.name('index.html')
+    grok.name('index')
     grok.context(IOnTheFlyUser)
     grok.require('uvc.ManageCoUsers')
 
@@ -228,7 +235,9 @@ class ENMSUpdateUser(uvcsite.browser.Form):
         return base.Fields(self.context.__parent__.user_schema)
 
     def update(self):
-        self.setContentData(base.DictDataManager(self.context))
+        context = self.context
+        context['confirm'] = context['passwort']
+        self.setContentData(base.DictDataManager(context))
 
     def updateForm(self):
         super(ENMSUpdateUser, self).updateForm()
@@ -256,18 +265,6 @@ class ENMSUpdateUser(uvcsite.browser.Form):
         self.context.__parent__.delete(self.context['az'])
         self.flash(_('Der Mitbenutzer wurde entfernt.'))
         self.redirect(self.url(self.context.__parent__))
-
-
-class ChangePasswordMenu(uvcsite.browser.layout.menu.MenuItem):
-    grok.require('zope.View')
-    grok.adapts(Interface, Interface, Interface,
-                uvcsite.browser.layout.slots.interfaces.IPersonalMenu)
-    title = u"Passwort ändern"
-
-    @property
-    def url(self):
-        return self.view.url(
-            IHomeFolder(self.request.principal), 'changepassword')
 
 
 class ChangePassword(uvcsite.browser.Form):

@@ -13,11 +13,13 @@ from zope.component import getMultiAdapter
 from zope.interface import Interface, implementer
 from zope.pagetemplate.interfaces import IPageTemplate
 from zope.traversing.browser import absoluteURL
+from uvcsite.content.tables import IContainerTable
 
 
 grok.templatedir('templates')
 
 
+@implementer(IContainerTable)
 class Index(uvcsite.browser.TablePage):
     grok.title(u'Mein Ordner')
     grok.context(IHomeFolder)
@@ -90,7 +92,7 @@ class DirectAccessViewlet(grok.Viewlet):
             pf = hf[value.key]
             if interaction.checkPermission('uvc.ViewContent', pf):
                 yield dict(href=absoluteURL(pf, self.request),
-                           name=value.key)
+                           name=value.title)
 
     def render(self):
         template = getMultiAdapter((self, self.request), IPageTemplate)

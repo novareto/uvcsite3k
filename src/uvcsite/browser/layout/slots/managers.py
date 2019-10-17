@@ -40,7 +40,7 @@ class Tabs(grok.ViewletManager):
         res = self.content()
         if not res:
             return u""
-        return f"<ul class='nav navbar-nav pull-right'>{res}</ul>"
+        return f"<ul class='nav justify-content-end'>{res}</ul>"
 
 
 @zope.interface.implementer(interfaces.IAboveContent)

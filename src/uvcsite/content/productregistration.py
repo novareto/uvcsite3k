@@ -29,6 +29,10 @@ class ProductRegistration(ABC, grok.Subscription):
         """Availability computation.
         """
 
+    @property
+    def title(self):
+        return grok.title.bind().get(self)
+
     @abstractmethod
     def factory(self, *args, **kwargs):
         """Content factory.

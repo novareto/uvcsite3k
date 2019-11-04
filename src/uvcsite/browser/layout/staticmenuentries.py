@@ -6,6 +6,7 @@ import grok
 import uvcsite
 import urllib
 import uvc.menus.components
+import uvc.menus.directives
 
 from uvcsite.interfaces import IHomeFolder
 from zope.interface import Interface
@@ -45,7 +46,7 @@ class PersonalPanelEntry(uvc.menus.components.MenuItem):
     grok.name("personalpanelentry")
     grok.require("zope.View")
     grok.order(35)
-    uvc.menus.components.menu(
+    uvc.menus.directives.menu(
         uvcsite.browser.layout.slots.interfaces.IPersonalPreferences)
 
     title = "Meine Einstellungen"
@@ -64,7 +65,7 @@ class PersonalPanelEntry(uvc.menus.components.MenuItem):
 class UserName(uvc.menus.components.MenuItem):
     grok.name("username")
     grok.title("USERSNAME")
-    uvc.menus.components.menu(
+    uvc.menus.directives.menu(
         uvcsite.browser.layout.slots.interfaces.IPersonalPreferences)
     grok.order(10)
     grok.require("zope.View")
@@ -84,7 +85,7 @@ class MeinOrdner(uvc.menus.components.MenuItem):
     grok.name("Mein Ordner")
     grok.order(20)
     grok.require("zope.View")
-    uvc.menus.components.menu(
+    uvc.menus.directives.menu(
         uvcsite.browser.layout.slots.interfaces.IPersonalPreferences)
 
     title = "Mein Ordner"
@@ -104,7 +105,7 @@ class ChangePasswordMenu(uvc.menus.components.MenuItem):
     #grok.require('zope.View')
     grok.order(50)
     grok.name('ChangePW')
-    uvc.menus.components.menu(
+    uvc.menus.directives.menu(
         uvcsite.browser.layout.slots.interfaces.IPersonalMenu)
 
     title = u"Passwort ändern"
@@ -120,7 +121,7 @@ class Mitbenutzerverwaltung(uvc.menus.components.MenuItem):
     grok.order(30)
     #grok.require("uvc.ManageCoUsers")
     grok.name("Mitbenutzerverwaltung")
-    uvc.menus.components.menu(
+    uvc.menus.directives.menu(
         uvcsite.browser.layout.slots.interfaces.IPersonalMenu)
 
     title = u"Mitbenutzerverwaltung"

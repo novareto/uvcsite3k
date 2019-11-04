@@ -7,7 +7,7 @@ import collections.abc
 
 import uvcsite.browser
 import uvcsite.browser.layout.slots.interfaces
-import uvcsite.browser.layout.menu
+import uvc.menus.components
 
 from grokcore.component.interfaces import IContext
 from grokcore.chameleon.components import ChameleonPageTemplateFile

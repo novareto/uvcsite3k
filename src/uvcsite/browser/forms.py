@@ -1,4 +1,5 @@
 import grok
+from uvcsite.content.events import AfterSaveEvent
 import uvcsite.browser
 import zeam.form.base
 import zope.lifecycleevent
@@ -74,6 +75,7 @@ class AddForm(uvcsite.browser.Form):
         if obj is not None:
             # mark only as finished if we get the new object
             self._finishedAdd = True
+            grok.notify(AfterSaveEvent(obj, self.request))
 
     def createAndAdd(self, data):
         obj = self.create(data)

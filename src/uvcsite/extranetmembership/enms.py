@@ -191,12 +191,10 @@ class ENMSCreateUser(uvcsite.browser.Form):
         all_users = self.getNextNumber(um.getUserGroups(principal))
         user = principal + '-' + str(all_users).zfill(2)
         rollen = [x for x in self.context.__parent__.keys()]
-        print(rollen)
         return {'mnr': user, 'rollen': rollen}
 
     def update(self):
         data = self.getDefaultData()
-        print (data)
         self.setContentData(base.DictDataManager(data))
 
     @base.action(_("Anlegen"))

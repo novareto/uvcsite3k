@@ -50,3 +50,13 @@ Thumbs.db
 .mr.developer.cfg
 pip-selfcheck.json
 *.egg-info
+
+.Python
+bin/
+develop-eggs/
+eggs/
+include/
+lib/
+parts/
+src/
+!src/uvcsite/

@@ -4,7 +4,7 @@ import grok
 
 from zope import interface
 from zope.pluggableauth import factories
-from uvcsite.interfaces import IHomeFolder
+from uvcsite.interfaces import IHomeFolder, IMyRoles
 from uvcsite.utils import shorties
 from zope.security.interfaces import IPrincipal
 
@@ -29,3 +29,6 @@ class Principal(factories.Principal):
 
     def getObjects(self):
         return None
+
+    def getRoles(self):
+        return IMyRoles(self).getAllRoles()

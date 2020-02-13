@@ -8,15 +8,17 @@ import uvcsite
 from megrok.pagetemplate import PageTemplate
 from zope import interface, component, viewlet
 from zope.pagetemplate.interfaces import IPageTemplate
+from uvcsite.browser.layout.slots.interfaces import IAboveContent
 
-grok.templatedir('templates')
+grok.templatedir("templates")
 
 
 class HelpManager(grok.ViewletManager):
     """ ViewletManager für HilfeSeiten
     """
+
     grok.context(interface.Interface)
-    grok.name('uvc.hilfen')
+    grok.name("uvc.hilfen")
 
     def getHelpPages(self):
         return [v for v in self.viewlets if IHelpPage.providedBy(v)]
@@ -25,8 +27,7 @@ class HelpManager(grok.ViewletManager):
         return [v for v in self.viewlets if not IHelpPage.providedBy(v)]
 
     def render(self):
-        template = component.getMultiAdapter(
-            (self, self.request), IPageTemplate)
+        template = component.getMultiAdapter((self, self.request), IPageTemplate)
         return template()
 
 
@@ -35,7 +36,7 @@ class HelpManagerTemplate(PageTemplate):
 
 
 class Help(grok.Viewlet):
-    grok.viewletmanager(uvcsite.IAboveContent)
+    grok.viewletmanager(IAboveContent)
     grok.context(interface.Interface)
     grok.order(9999)
 
@@ -43,7 +44,8 @@ class Help(grok.Viewlet):
         helpmanager = component.getMultiAdapter(
             (self.context, self.request, self.view),
             viewlet.interfaces.IViewletManager,
-            name=u'uvc.hilfen')
+            name=u"uvc.hilfen",
+        )
         helpmanager.update()
         return helpmanager.render()
 
@@ -61,10 +63,12 @@ class HelpPage(grok.Viewlet):
         self.response = self.request.response
 
     def namespace(self):
-        return {'settings_overrides': {
-            'input_encoding': 'utf-8',
-            'output_encoding': 'unicode',
-            'stylesheet': '',
-            'stylesheet_path': None,
-            'embed_stylesheet': 0,
-        }}
+        return {
+            "settings_overrides": {
+                "input_encoding": "utf-8",
+                "output_encoding": "unicode",
+                "stylesheet": "",
+                "stylesheet_path": None,
+                "embed_stylesheet": 0,
+            }
+        }

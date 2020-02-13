@@ -44,6 +44,7 @@ setup(name='uvcsite',
           'zope.publisher',
           'zope.sendmail',
           'zope.traversing',
+          'z3c.rml',
           'ZEO',
       ],
       entry_points={

@@ -13,8 +13,8 @@ class IAfterSaveEvent(zope.component.interfaces.IObjectEvent):
     principal = interface.Attribute("Pincipal")
 
 
+@interface.implementer(IAfterSaveEvent)
 class AfterSaveEvent(zope.component.interfaces.ObjectEvent):
-    grok.implements(IAfterSaveEvent)
 
     def __init__(self, object, request):
         self.object = object

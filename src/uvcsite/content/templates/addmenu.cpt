@@ -1,5 +1,5 @@
 <li id="add-content" class="dropdown">
-<a class="btn btn-secondary dropdown-toggle" data-toggle="dropdown">Hinzufügen <b class="caret"></b></a>
+<a class="btn btn-primary dropdown-toggle" data-toggle="dropdown">Hinzufügen <b class="caret"></b></a>
 <ul class="dropdown-menu">
   <li class="entry">
   <a class="dropdown-item" href="add" tal:attributes="href view.getAddLinkUrl()"> 

@@ -53,4 +53,5 @@ class ProductRegistration(ABC, grok.Subscription):
 
         if self.key not in container:
             productfolder = container[self.key] = self.factory()
+            uvcsite.log('Create ProductFolder %s' % self.key)
             return productfolder

@@ -1,7 +1,7 @@
 <div class="dropdown">
-  <a class="btn btn-secondary dropdown-toggle" href="#" data-toggle="dropdown">Quick Navigation <b class="caret"> </b></a>
-  <div class="dropdown-menu" tal:repeat="type viewlet.getContentTypes()" class="entry"> 
-    <a class="dropdown-item" href="" tal:attributes="href type['href']"> 
+  <a class="btn btn-primary dropdown-toggle" href="#" data-toggle="dropdown">Quick Navigation <b class="caret"> </b></a>
+  <div class="dropdown-menu" class="entry"> 
+    <a class="dropdown-item" tal:repeat="type viewlet.getContentTypes()" href="" tal:attributes="href type['href']"> 
       <span tal:content="type['name']"> </span>
     </a>
   </div>

@@ -19,4 +19,4 @@ def add_product_folders(factory):
     principal = factory.object
     for sub in uvcsite.content.productregistration.get_product_registrations(
             principal, discard_unavailable=True):
-        sub.create(container=homefolder)
+        sub.create(container=principal.homefolder)

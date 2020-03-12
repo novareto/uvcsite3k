@@ -90,14 +90,10 @@ class DirectAccessViewlet(grok.Viewlet):
         interaction = self.request.interaction
         hf = uvcsite.interfaces.IHomeFolder(self.request.principal, [])
         for value in get_product_registrations(self.request.principal, discard_unavailable=True):
-            print(value)
             pf = hf.get(value.key)
-            print(pf)
-            print(interaction.checkPermission('uvc.ViewContent', pf))
-            if pf and interaction.checkPermission('uvc.ViewContent', pf):
-                print ("ADD")
-                rc.append(dict(href=absoluteURL(pf, self.request), name=value.title))
-        print (rc)
+            if not pf is None:
+                if interaction.checkPermission('uvc.ViewContent', pf):
+                    rc.append(dict(href=absoluteURL(pf, self.request), name=value.title))
         return rc
 
     def render(self):

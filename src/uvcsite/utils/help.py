@@ -16,7 +16,6 @@ grok.templatedir("templates")
 class HelpManager(grok.ViewletManager):
     """ ViewletManager für HilfeSeiten
     """
-
     grok.context(interface.Interface)
     grok.name("uvc.hilfen")
 

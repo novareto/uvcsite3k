@@ -20,3 +20,14 @@ def add_product_folders(factory):
     for sub in uvcsite.content.productregistration.get_product_registrations(
             principal, discard_unavailable=True):
         sub.create(container=principal.homefolder)
+
+
+class HH(grok.View):
+    grok.context(uvcsite.interfaces.IUVCSite)
+
+    def render(self):
+        principal = self.request.principal 
+        for sub in uvcsite.content.productregistration.get_product_registrations(
+                principal, discard_unavailable=True):
+            sub.create(container=principal.homefolder)
+        return "ALLES ANGELGT"

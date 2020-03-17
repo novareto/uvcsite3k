@@ -1,8 +1,11 @@
-<configure xmlns="http://namespaces.zope.org/zope"
-           xmlns:browser="http://namespaces.zope.org/browser"
-           xmlns:grok="http://namespaces.zope.org/grok">
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:i18n="http://namespaces.zope.org/i18n"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    xmlns:grok="http://namespaces.zope.org/grok">
+
   <include package="grok" />
-  <includeDependencies package="." /> 
+  <includeDependencies package="." />
   <include package=".auth" />
   <include package=".extranetmembership" />
   <include package=".content" />
@@ -10,7 +13,7 @@
   <include package=".browser" />
   <include package=".workflow" />
   <include package=".utils" />
-  
+
   <grok:grok package=".homefolder" />
   <grok:grok package=".app" />
   <grok:grok package=".permissions" />
@@ -19,5 +22,10 @@
   <include package="uvcsite" file="principals.zcml" />
   <include package="zope.pluggableauth" />
   <include package="zope.pluggableauth.plugins" file="groupfolder.zcml" />
+
+  <!-- Translations -->
+  <include package="zope.i18n" />
+  <include package="zope.i18n" file="meta.zcml" />
+  <i18n:registerTranslations directory="locales" />
 
 </configure>

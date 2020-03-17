@@ -1,7 +1,9 @@
 <configure
     i18n_domain="uvcsite"
     xmlns="http://namespaces.zope.org/zope"
+    xmlns:grok="http://namespaces.zope.org/grok"
     xmlns:browser="http://namespaces.zope.org/browser" >
   <include package="uvcsite" />
+  <grok:grok package="uvc.example" />
   ${site_zcml:extra}
 </configure>

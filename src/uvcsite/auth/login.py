@@ -30,7 +30,7 @@ class ILoginForm(zope.interface.Interface):
         required=True)
 
     camefrom = zope.schema.TextLine(
-        title=_("TextLine"),
+        title=_("Origin of the request"),
         required=False)
 
 
@@ -79,7 +79,7 @@ class Login(Form):
 class Logout(grok.View):
     grok.context(zope.interface.Interface)
     grok.require('zope.Public')
-    
+
     def update(self):
         if uvcsite.utils.shorties.isLoggedIn(self.request):
             auth = zope.component.queryUtility(IAuthentication)

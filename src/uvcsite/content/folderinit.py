@@ -1,7 +1,9 @@
 import grok
 import uvcsite.interfaces
 import uvcsite.content.productregistration
+
 from zope.pluggableauth.factories import Principal
+from uvcsite.auth.event import IUserLoggedInEvent
 
 
 @grok.subscribe(uvcsite.interfaces.IHomeFolder, grok.IObjectAddedEvent)
@@ -10,3 +12,22 @@ def handle_homefolder(homefolder, event):
     for sub in uvcsite.content.productregistration.get_product_registrations(
             principal, discard_unavailable=True):
         sub.create(container=homefolder)
+
+
+@grok.subscribe(IUserLoggedInEvent)
+def add_product_folders(factory):
+    principal = factory.object
+    for sub in uvcsite.content.productregistration.get_product_registrations(
+            principal, discard_unavailable=True):
+        sub.create(container=principal.homefolder)
+
+
+class HH(grok.View):
+    grok.context(uvcsite.interfaces.IUVCSite)
+
+    def render(self):
+        principal = self.request.principal 
+        for sub in uvcsite.content.productregistration.get_product_registrations(
+                principal, discard_unavailable=True):
+            sub.create(container=principal.homefolder)
+        return "ALLES ANGELGT"

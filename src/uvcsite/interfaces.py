@@ -13,3 +13,11 @@ class IHomeFolder(grok.interfaces.IContainer):
 
 class IHomeFolderManager(zope.interface.Interface):
     pass
+
+
+class IMyRoles(zope.interface.Interface):
+    """Return all allowed Roles in various forms
+    """
+
+
+

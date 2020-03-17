@@ -9,6 +9,7 @@
   <include package=".plugins" />
   <include package=".browser" />
   <include package=".workflow" />
+  <include package=".utils" />
   
   <grok:grok package=".homefolder" />
   <grok:grok package=".app" />

@@ -18,7 +18,6 @@ class ProductFolderGrokker(martian.ClassGrokker):
     martian.directive(grokcore.component.name, get_default=default_name)
 
     def execute(self, factory, config, contenttype, name):
-        print(name)
         if not contenttype:
             raise GrokError("%r must specify which contenttype should "
                             "go into this ProductFolder. Please use the"

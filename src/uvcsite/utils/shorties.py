@@ -14,7 +14,7 @@ from zope.authentication.interfaces import IUnauthenticatedPrincipal
 
 
 def isLoggedIn(request):
-    return (not IUnauthenticatedPrincipal.providedBy(request.principal))
+    return not IUnauthenticatedPrincipal.providedBy(request.principal)
 
 
 def getHomeFolderUrl(request, suffix=""):
@@ -31,21 +31,22 @@ def fmtDateTime(object, fmt="%d.%m.%Y %H:%M:%S"):
 
 def fmtDate(p_date):
     if p_date is None:
-        return ''
-    tz = pytz.timezone('Europe/Berlin')
+        return ""
+    tz = pytz.timezone("Europe/Berlin")
     if isinstance(p_date, datetime):
         if p_date.tzinfo:
             tz = p_date.tzinfo
         p_date = datetime(p_date.year, p_date.month, p_date.day, tzinfo=tz)
-        return fmtDateTime(p_date, fmt='%d.%m.%Y')
+        return fmtDateTime(p_date, fmt="%d.%m.%Y")
     if isinstance(p_date, date):
         p_date = datetime(p_date.year, p_date.month, p_date.day, tzinfo=tz)
     if isinstance(p_date, int):
         p_date = str(p_date)
     if isinstance(p_date, str):
         p_date = datetime(
-            int(p_date[0:4]), int(p_date[4:6]), int(p_date[6:8]), tzinfo=tz)
-    return fmtDateTime(p_date, fmt='%d.%m.%Y')
+            int(p_date[0:4]), int(p_date[4:6]), int(p_date[6:8]), tzinfo=tz
+        )
+    return fmtDateTime(p_date, fmt="%d.%m.%Y")
 
 
 def getHomeFolder(request):
@@ -69,21 +70,22 @@ def fmtDateTime(object, fmt="%d.%m.%Y %H:%M:%S"):
 
 def fmtDate(p_date):
     if p_date is None:
-        return ''
-    tz = pytz.timezone('Europe/Berlin')
+        return ""
+    tz = pytz.timezone("Europe/Berlin")
     if isinstance(p_date, datetime):
         if p_date.tzinfo:
             tz = p_date.tzinfo
         p_date = datetime(p_date.year, p_date.month, p_date.day, tzinfo=tz)
-        return fmtDateTime(p_date, fmt='%d.%m.%Y')
+        return fmtDateTime(p_date, fmt="%d.%m.%Y")
     if isinstance(p_date, date):
         p_date = datetime(p_date.year, p_date.month, p_date.day, tzinfo=tz)
     if isinstance(p_date, int):
         p_date = str(p_date)
     if isinstance(p_date, str):
         p_date = datetime(
-            int(p_date[0:4]), int(p_date[4:6]), int(p_date[6:8]), tzinfo=tz)
-    return fmtDateTime(p_date, fmt='%d.%m.%Y')
+            int(p_date[0:4]), int(p_date[4:6]), int(p_date[6:8]), tzinfo=tz
+        )
+    return fmtDateTime(p_date, fmt="%d.%m.%Y")
 
 
 def fmtZahl(n):
@@ -91,17 +93,17 @@ def fmtZahl(n):
         r = []
         for i, c in enumerate(reversed(str(n))):
             if i and (not (i % 3)):
-                r.insert(0, '.')
+                r.insert(0, ".")
             r.insert(0, c)
-        return ''.join(r)
+        return "".join(r)
     return n
 
 
 def fmtFloat(f, dp=2):
     if f is None:
-        return ''
-    assert(isinstance(f, float))
-    vk, nk = str('%.*f' % (dp, f)).split('.')
+        return ""
+    assert isinstance(f, float)
+    vk, nk = str("%.*f" % (dp, f)).split(".")
     return "%s,%s" % (fmtZahl(vk), str(nk))
 
 

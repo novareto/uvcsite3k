@@ -33,3 +33,5 @@ class TestPrincipal(unittest.TestCase):
             self.assertEqual(
                 pr.homefolder_url, "http://127.0.0.1/app/members/0101010001"
             )
+            self.assertEqual(pr.getRoles(), ['ENMS'])
+

@@ -44,11 +44,12 @@ class Index(uvcsite.browser.TablePage):
 
     def getContentTypes(self):
         interaction = self.request.interaction
+        rc = []
         for key, value in self.context.items():
             if (interaction.checkPermission('uvc.ViewContent', value)
                 and not getattr(value, 'excludeFromNav', False)):
-                yield dict(
-                    href=absoluteURL(value, self.request), name=key)
+                rc.append(dict(href=absoluteURL(value, self.request), name=key))
+        return rc
 
     def executeDelete(self, item):
         self.flash(_(u'Ihre Dokumente wurden entfernt'))
@@ -85,14 +86,15 @@ class DirectAccessViewlet(grok.Viewlet):
     grok.viewletmanager(uvcsite.browser.layout.slots.interfaces.ITabs)
 
     def getContentTypes(self):
+        rc = []
         interaction = self.request.interaction
         hf = uvcsite.interfaces.IHomeFolder(self.request.principal, [])
-        for value in get_product_registrations(
-                self.request.principal, discard_unavailable=True):
-            pf = hf[value.key]
-            if interaction.checkPermission('uvc.ViewContent', pf):
-                yield dict(href=absoluteURL(pf, self.request),
-                           name=value.title)
+        for value in get_product_registrations(self.request.principal, discard_unavailable=True):
+            pf = hf.get(value.key)
+            if not pf is None:
+                if interaction.checkPermission('uvc.ViewContent', pf):
+                    rc.append(dict(href=absoluteURL(pf, self.request), name=value.title))
+        return rc
 
     def render(self):
         template = getMultiAdapter((self, self.request), IPageTemplate)

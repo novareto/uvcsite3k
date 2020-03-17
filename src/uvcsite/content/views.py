@@ -3,10 +3,12 @@ import uvcsite.browser
 import uvcsite.utils.forms
 import uvcsite.content.interfaces
 import uvcsite.content.tables
+
 import uvcsite.browser
 import uvcsite.browser.forms
 import uvcsite.browser.layout.slots.interfaces
 
+from uvcsite.content.events import AfterSaveEvent
 from megrok.pagetemplate import PageTemplate
 from megrok.z3ctable import Values
 from uvcsite import uvcsiteMF as _
@@ -163,7 +165,7 @@ class Add(uvcsite.browser.forms.AddForm):
         self.context.add(content)
 
     def nextURL(self):
-        self.flash(_('Added Content'))
+        self.flash(_('Added Content'), type="success")
         return self.url(self.context)
 
 
@@ -179,11 +181,13 @@ class Edit(uvcsite.browser.Form):
     @base.action(u'Speichern')
     def handle_apply(self):
         data, errors = self.extractData()
+        import pdb; pdb.set_trace()
         if errors:
             self.flash('Es sind Fehler aufgetreten', type="error")
             return
         changes = uvcsite.browser.forms.apply_data_event(self.fields, self.context, data)
         if changes:
+            grok.notify(AfterSaveEvent(self.context, self.request))
             self.flash(u'Ihre Daten wurden erfolgreich gendert', type="info")
             return
         else:

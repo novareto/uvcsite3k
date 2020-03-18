@@ -1,0 +1,176 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"POT-Creation-Date: 2020-03-18 13:25+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI +ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0\n"
+"Language-Code: de\n"
+"Language-Name: German\n"
+"Preferred-Encodings: utf-8 latin1\n"
+"Domain: uvcsite\n"
+
+#: ./content/views.py:168
+msgid "Added Content"
+msgstr ""
+
+#: ./principals.zcml:11
+msgid "All Users"
+msgstr ""
+
+#: ./extranetmembership/enms.py:200
+msgid "Anlegen"
+msgstr ""
+
+#: ./principals.zcml:9
+msgid "Authenticated Users"
+msgstr ""
+
+#: ./content/tables.py:66
+msgid "Autor"
+msgstr ""
+
+#: ./extranetmembership/enms.py:249
+msgid "Bearbeiten"
+msgstr ""
+
+#: ./extranetmembership/interfaces.py:13
+msgid "Benutzername für den Mitbenutzer (Mitgliedsnummer-lfd.Nr.)"
+msgstr ""
+
+#: ./extranetmembership/interfaces.py:18
+msgid "Berechtigung"
+msgstr ""
+
+#: ./extranetmembership/interfaces.py:31
+msgid "Bestätigung"
+msgstr ""
+
+#: ./extranetmembership/interfaces.py:32
+msgid "Bitte bestätigen Sie das eingegebene Passwort."
+msgstr ""
+
+#: ./extranetmembership/interfaces.py:25
+msgid "Bitte tragen Sie hier das Passwort ein."
+msgstr ""
+
+#: ./auth/cookies.py:23
+msgid "Cookie name"
+msgstr ""
+
+#: ./content/tables.py:77
+msgid "Datum"
+msgstr ""
+
+#: ./extranetmembership/enms.py:264
+msgid "Der Mitbenutzer wurde entfernt."
+msgstr ""
+
+#: ./extranetmembership/enms.py:214
+msgid "Der Mitbenutzer wurde gespeichert"
+msgstr ""
+
+#: ./extranetmembership/enms.py:260
+msgid "Entfernen"
+msgstr ""
+
+#: ./extranetmembership/enms.py:274
+msgid "Hier können Sie Ihr Passwort ändern"
+msgstr ""
+
+#: ./homefolder/views.py:43
+msgid "Hier werden Ihre Dokumente abgelegt"
+msgstr ""
+
+#: ./auth/login.py:45
+msgid "Identify yourself"
+msgstr ""
+
+#: ./extranetmembership/enms.py:291
+msgid "Ihr Passwort wurde gespeichert!"
+msgstr ""
+
+#: ./content/views.py:56
+#: ./homefolder/views.py:55
+msgid "Ihre Dokumente wurden entfernt"
+msgstr ""
+
+#: ./auth/login.py:40
+msgid "Log in"
+msgstr "Anmelden"
+
+#: ./auth/login.py:60
+msgid "Login failed"
+msgstr "Die Anmeldung ist fehlgeschlagen"
+
+#: ./auth/login.py:46
+msgid "Login form"
+msgstr "Bitte melden Sie sich an"
+
+#: ./principals.zcml:17
+msgid "Manager"
+msgstr ""
+
+#: ./extranetmembership/interfaces.py:12
+msgid "Mitgliedsnummer"
+msgstr ""
+
+#: ./auth/cookies.py:24
+msgid "Name of the cookie for storing credentials."
+msgstr ""
+
+#: ./content/tables.py:57
+msgid "Objekt"
+msgstr ""
+
+#: ./auth/login.py:33
+msgid "Origin of the request"
+msgstr ""
+
+#: ./auth/login.py:29
+msgid "Password"
+msgstr "Passwort"
+
+#: ./extranetmembership/interfaces.py:24
+msgid "Passwort"
+msgstr "Passwort"
+
+#: ./extranetmembership/enms.py:273
+msgid "Passwort ändern"
+msgstr ""
+
+#: ./principals.zcml:24
+msgid "Site Manager"
+msgstr ""
+
+#: ./principals.zcml:25
+msgid "Site Member"
+msgstr ""
+
+#: ./content/tables.py:91
+msgid "Status"
+msgstr ""
+
+#: ./content/tables.py:37
+msgid "Titel"
+msgstr ""
+
+#: ./principals.zcml:5
+msgid "Unauthenticated User"
+msgstr ""
+
+#: ./principals.zcml:7
+msgid "Unauthenticated Users"
+msgstr ""
+
+#: ./auth/login.py:25
+msgid "Username"
+msgstr "Benutzername / Anmeldename"
+
+#: ./auth/login.py:64
+msgid "You are now logged in as ${name}"
+msgstr ""

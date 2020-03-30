@@ -1,3 +1,8 @@
+# -*- coding: utf-8 -*-
+# # Copyright (c) 2007-2019 NovaReto GmbH
+# # cklinger@novareto.de 
+
+import six
 import grok
 import uvcsite.browser
 import uvcsite.browser.layout.slots.interfaces
@@ -52,18 +57,18 @@ class Index(uvcsite.browser.TablePage):
         return rc
 
     def executeDelete(self, item):
-        self.flash(_(u'Ihre Dokumente wurden entfernt'))
         del item.__parent__[item.__name__]
 
     def update(self):
         items = self.request.form.get('table-checkBox-0-selectedItems')
         if items and 'form.button.delete' in self.request:
-            if isinstance(items, (str, unicode)):
+            if isinstance(items, six.string_types):
                 items = [items]
             for key in items:
                 for pf in self.context.values():
                     if key in pf:
                         self.executeDelete(pf[key])
+            self.flash(u'Es wurden %s Dokumente entfernt.' % (len(items)), type="success")
         super(Index, self).update()
 
     def renderCell(self, item, column, colspan=0):

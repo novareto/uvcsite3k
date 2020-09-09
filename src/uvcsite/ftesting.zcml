@@ -1,10 +1,12 @@
 <configure
     xmlns="http://namespaces.zope.org/zope"
+    xmlns:mail="http://namespaces.zope.org/mail"
     xmlns:browser="http://namespaces.zope.org/browser"
     i18n_domain="uvcsite"
     package="uvcsite">
 
   <include package="uvcsite" />
+  <include package="zope.sendmail" file="meta.zcml"/>
 
   <!-- session -->
   <browser:beakerSession

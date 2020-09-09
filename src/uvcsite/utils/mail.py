@@ -20,16 +20,29 @@ COMMASPACE = ', '
 
 
 config = zope.app.appsetup.product.getProductConfiguration('mailer')
-queue_path = config.get('queue-path')
-hostname = config.get('hostname', 'localhost')
-port = int(config.get('port', 25))
-# treat username and password as non-existent if they're empty strings
-username = config.get('username', None) or None
-password = config.get('password', None) or None
+if config is not None:
+    queue_path = config.get('queue-path')
+    hostname = config.get('hostname', 'localhost')
+    port = int(config.get('port', 25))
+    # treat username and password as non-existent if they're empty strings
+    username = config.get('username', None) or None
+    password = config.get('password', None) or None
 
 
-mailer_object = zope.sendmail.mailer.SMTPMailer(
+    mailer_object = zope.sendmail.mailer.SMTPMailer(
         hostname, port, username, password, force_tls=False)
+
+    grok.global_utility(
+        mailer,
+        provides=zope.sendmail.interfaces.IMailer,
+        name='uvcsite.smtpmailer')
+
+    grok.global_utility(
+        delivery,
+        zope.sendmail.interfaces.IMailDelivery,
+        name='uvcsite.maildelivery')
+
+    start_processor_thread()
 
 
 def mailer():
@@ -47,6 +60,13 @@ def start_processor_thread():
     thread.start()
 
 
+def get_mailer():
+    return zope.component.getUtility(
+        zope.sendmail.interfaces.IMailDelivery,
+        name=u'uvcsite.maildelivery'
+    )
+
+
 def send_mail(sender, recipient, subject, body, file=None, filename=None):
     '''
     Funktion zum versenden von Emails
@@ -57,7 +77,7 @@ def send_mail(sender, recipient, subject, body, file=None, filename=None):
     msg = MIMEMultipart()
     msg["From"] = sender
     msg["To"] = COMMASPACE.join(recipient)  # List to String
-    msg["Subject"] = email.Header.Header(subject, 'UTF-8')
+    msg["Subject"] = email.header.Header(subject, 'UTF-8')
     msg.attach(MIMEText(body.encode('utf-8'), 'plain', 'utf-8'))
 
     # Attachment von Dateien
@@ -72,19 +92,5 @@ def send_mail(sender, recipient, subject, body, file=None, filename=None):
             'attachment; filename=%s' % filename or fn
             )
         msg.attach(part)
-    mailer = zope.component.getUtility(
-        zope.sendmail.interfaces.IMailDelivery,
-        name=u'uvcsite.maildelivery'
-        )
+    mailer = get_mailer()
     mailer.send(sender, recipient, msg.as_string())
-
-
-grok.global_utility(
-    mailer,
-    provides=zope.sendmail.interfaces.IMailer,
-    name='uvcsite.smtpmailer')
-grok.global_utility(
-    delivery,
-    zope.sendmail.interfaces.IMailDelivery,
-    name='uvcsite.maildelivery')
-start_processor_thread()

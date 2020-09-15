@@ -43,7 +43,6 @@ if config is not None:
         thread.setMailer(mailer_object)
         thread.setQueuePath(queue_path)
         thread.start()
-
     grok.global_utility(
         mailer,
         provides=zope.sendmail.interfaces.IMailer,

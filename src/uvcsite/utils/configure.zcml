@@ -6,5 +6,6 @@
    <grok:grok package=".help" />
    <grok:grok package=".dataviews" />
    <grok:grok package=".rml" />
+   <grok:grok package=".mail" />
 
 </configure>

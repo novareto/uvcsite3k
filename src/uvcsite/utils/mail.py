@@ -32,6 +32,17 @@ if config is not None:
     mailer_object = zope.sendmail.mailer.SMTPMailer(
         hostname, port, username, password, force_tls=False)
 
+    def mailer():
+        return mailer_object
+
+    def delivery():
+        return zope.sendmail.delivery.QueuedMailDelivery(queue_path)
+
+    def start_processor_thread():
+        thread = zope.sendmail.queue.QueueProcessorThread()
+        thread.setMailer(mailer_object)
+        thread.setQueuePath(queue_path)
+        thread.start()
     grok.global_utility(
         mailer,
         provides=zope.sendmail.interfaces.IMailer,
@@ -43,21 +54,6 @@ if config is not None:
         name='uvcsite.maildelivery')
 
     start_processor_thread()
-
-
-def mailer():
-    return mailer_object
-
-
-def delivery():
-    return zope.sendmail.delivery.QueuedMailDelivery(queue_path)
-
-
-def start_processor_thread():
-    thread = zope.sendmail.queue.QueueProcessorThread()
-    thread.setMailer(mailer_object)
-    thread.setQueuePath(queue_path)
-    thread.start()
 
 
 def get_mailer():

@@ -34,6 +34,7 @@ class BaseDataView(grok.View):
         return grok.title.bind().get(self)
 
     def update(self, filename=None):
+        print (filename)
         self.base_file = self.getFile(filename)
         self.generate()
 
@@ -56,7 +57,7 @@ class BaseDataView(grok.View):
         currentfile.seek(0)
         RESPONSE = self.request.response
         RESPONSE.setHeader('content-type', self.content_type)
-        RESPONSE.setHeader('content-length', currentfile)
+        #RESPONSE.setHeader('content-length', currentfile)
         RESPONSE.setHeader(
             'content-disposition', 'attachment; filename=%s' % self.filename)
         return currentfile

@@ -67,6 +67,7 @@ class AddForm(uvcsite.browser.Form):
 
     @zeam.form.base.action(u'Speichern', identifier="uvcsite.add")
     def handleAdd(self):
+        #import pdb; pdb.set_trace()
         data, errors = self.extractData()
         if errors:
             self.flash('Es sind Fehler aufgetreten')

@@ -30,6 +30,24 @@ def applyGroups(factory):
         zope.interface.alsoProvides(principal, uvcsite.auth.interfaces.ICOUser)
 
 
+
+@grok.subscribe(IUserLoggedInEvent)
+def applyViewContentForCoUsers(factory):
+    principal = factory.object
+    homefolder = principal.homefolder
+    if not homefolder:
+        return
+    
+    if homefolder.__name__ != principal.id:
+        hprm = IPrincipalRoleManager(homefolder)
+        if hprm.getSetting('uvc.HomeFolderUser', principal.id).getName() in ('Deny', 'Unset'):
+            hprm.assignRoleToPrincipal('uvc.HomeFolderUser', principal.id)
+            uvcsite.log('applying Role uvc.HomeFolderUser for USER %s in HOMEFOLDER %s' % (principal.id, homefolder.__name__))
+
+
+
+
+
 @grok.subscribe(IUserLoggedInEvent)
 def applyPermissionsForExistentCoUsers(factory):
     site = grok.getSite()
@@ -53,7 +71,7 @@ def applyPermissionsForExistentCoUsers(factory):
     if homefolder.__name__ != pid:
         for pf in homefolder.keys():
             if pf in rollen:
-                prm = IPfincipalRoleManager(homefolder.get(pf))
+                prm = IPrincipalRoleManager(homefolder.get(pf))
                 if prm.getSetting('uvc.Editor', pid).getName() == 'Unset':
                     prm.assignRoleToPrincipal('uvc.Editor', pid)
                     uvcsite.log('Give uvc.Editor to %s in folder %s' % (pid, pf))

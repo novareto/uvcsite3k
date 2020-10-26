@@ -52,6 +52,7 @@ class ProductRegistration(ABC, grok.Subscription):
                     uvcsite.interfaces.IMasterUser(self.principal).id)
 
         if self.key not in container:
-            productfolder = container[self.key] = self.factory()
-            uvcsite.log('Create ProductFolder %s' % self.key)
-            return productfolder
+            if self.factory() is not None:
+                productfolder = container[self.key] = self.factory()
+                uvcsite.log('Create ProductFolder %s' % self.key)
+                return productfolder

@@ -6,6 +6,7 @@ import uvcsite.auth.interfaces
 
 from uvcsite.extranetmembership.interfaces import IUserManagement
 from uvcsite.interfaces import IHomeFolder
+from zope.authentication.interfaces import IUnauthenticatedPrincipal
 from zope.component import getUtility
 from zope.pluggableauth.interfaces import IAuthenticatedPrincipalCreated
 from zope.securitypolicy.interfaces import IPrincipalRoleManager
@@ -34,7 +35,9 @@ def applyGroups(factory):
 @grok.subscribe(IUserLoggedInEvent)
 def applyViewContentForCoUsers(factory):
     principal = factory.object
-    homefolder = principal.homefolder
+    homefolder = None
+    if IUnauthenticatedPrincipal.providedBy(principal):
+        homefolder = principal.homefolder
     if not homefolder:
         return
     

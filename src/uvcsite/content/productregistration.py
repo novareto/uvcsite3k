@@ -23,6 +23,7 @@ class ProductRegistration(ABC, grok.Subscription):
     grok.baseclass()
 
     key = None
+    inNav = True
 
     @abstractmethod
     def available(self) -> bool:

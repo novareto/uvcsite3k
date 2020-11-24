@@ -15,6 +15,7 @@ from zope.session.interfaces import ISession
 
 from uvcsite.auth.interfaces import IMasterUser
 from uvcsite.extranetmembership.interfaces import IUserManagement
+from uvcsite.content.principal import Principal
 
 
 USER_SESSION_KEY = "uvcsite.authentication"
@@ -97,7 +98,7 @@ class CheckRemote(grok.XMLRPC):
             login=user,
             password=password))
         if principal:
-            notify(uvcsite.auth.event.UserLoggedInEvent(principal))
+            notify(uvcsite.auth.event.UserLoggedInEvent(Principal(principal.id)))
             return 1
         return 0
 

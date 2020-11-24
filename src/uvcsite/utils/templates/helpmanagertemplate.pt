@@ -1,6 +1,6 @@
 <div class="row justify-content-end" tal:repeat="viewlet viewletmanager/getHelpPages">
-  <div class="modal modal-lg fade" tal:attributes="id string:modal-${viewlet/__class__/__name__}">
-    <div class="modal-dialog modal-dialog-centered">
+  <div class="modal fade" tal:attributes="id string:modal-${viewlet/__class__/__name__}">
+    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
       <div class="modal-content">
         <div class="modal-header">
           <h5 tal:content="viewlet/name|string:Hilfe">Title</h5>

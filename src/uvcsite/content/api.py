@@ -39,7 +39,7 @@ class ProductFolderRest(grok.REST):
         errors = []
         content = self.context.getContentType()()
         interface = content.schema[0]
-        serializer = ISerializer(content)
+        serializer = uvcsite.content.interfaces.ISerializer(content)
         serializer.work(self.body, interface, errors)
 
         if not errors:

@@ -144,4 +144,4 @@ class RestHomeFolderTraverser(grok.Traverser):
     # grok.baseclass()
 
     def traverse(self, name):
-        return uvcsite.getHomeFolder(self.request).get(name)
+        return self.request.principal.homefolder.get(name)

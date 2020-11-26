@@ -22,14 +22,13 @@ class ProductFolderRest(grok.REST):
         context = self.context
         container = E('container', id=context.__name__)
         for id, obj in self.context.items():
-            state = titleForState(IWorkflowState(obj).getState())
             container.append(
                 E(obj.meta_type,
                     E('id', obj.__name__),
                     E('titel', obj.title),
                     E('author', obj.principal.id),
                     E('datum', obj.modtime.strftime('%d.%m.%Y')),
-                    E('status', state))
+                    E('status', obj.state.title))
             )
         return etree.tostring(
             container, xml_declaration=True,

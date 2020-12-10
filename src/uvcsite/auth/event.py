@@ -38,6 +38,8 @@ def applyViewContentForCoUsers(factory):
     homefolder = None
     if IUnauthenticatedPrincipal.providedBy(principal):
         homefolder = principal.homefolder
+    else:
+        homefolder = IHomeFolder(principal)
     if not homefolder:
         return
     

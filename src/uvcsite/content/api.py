@@ -1,6 +1,7 @@
 import grok
 import uvcsite
 import uvcsite.content.interfaces
+from uvcsite.content.events import AfterSaveEvent
 
 from hurry.workflow.interfaces import IWorkflowState
 from lxml import etree
@@ -48,6 +49,7 @@ class ProductFolderRest(grok.REST):
                 name=content.meta_type,
                 id=content.__name__
             )
+            grok.notify(AfterSaveEvent(content, self.request))
         else:
             result = etree.Element('failure')
             result.extend(errors)

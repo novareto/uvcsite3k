@@ -56,14 +56,19 @@ class PortalMembership(grok.Adapter):
         except KeyError:
             return default
 
-
+#from zope.interface import implementer
+#from grokcore.component import provider
+#from uvcsite.interfaces import IHomeFolder
 @grok.implementer(IHomeFolder)
 @grok.adapter(IPrincipal)
 def principal_homefolder(principal):
     principal = IMasterUser(principal)
     application = grok.getApplication()
     manager = IHomeFolderManager(application)
-    return manager.get(principal.id)
+    hf = manager.get(principal.id)
+    if not hf:
+        hf = manager.create(principal.id)
+    return hf
 
 
 @grok.implementer(IHomeFolder)

@@ -36,10 +36,17 @@ def applyGroups(factory):
 def applyViewContentForCoUsers(factory):
     principal = factory.object
     homefolder = None
-    if IUnauthenticatedPrincipal.providedBy(principal):
-        homefolder = principal.homefolder
-    else:
-        homefolder = IHomeFolder(principal)
+    #if IUnauthenticatedPrincipal.providedBy(principal):
+    #    homefolder = principal.homefolder
+    #else:
+    #    # Workaround, um weiter arbeiten zu können - CK muss noch fixen
+    #    #try:
+    #    #    homefolder = IHomeFolder(principal)
+    #    #except TypeError:
+    #    #    return
+    #    homefolder = IHomeFolder(principal)
+    homefolder = principal.homefolder
+
     if not homefolder:
         return
     
@@ -61,7 +68,7 @@ def applyPermissionsForExistentCoUsers(factory):
     master_id = IMasterUser(principal).id
     if hfm.get(master_id) is None:
         hfm.create(IMasterUser(principal).id)
-    homefolder = IHomeFolder(principal)
+    homefolder = principal.homefolder  #IHomeFolder(principal)
     if homefolder is None:
         return
     um = getUtility(IUserManagement)

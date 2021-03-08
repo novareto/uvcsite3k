@@ -89,16 +89,27 @@ class UVCAuthenticator(grok.GlobalUtility):
             return PrincipalInfo(id, id, id, id)
 
 
+
+from zope.authentication.interfaces import IAuthentication
+import base64
+
 class CheckRemote(grok.XMLRPC):
     grok.context(uvcsite.interfaces.IUVCSite)
 
     def checkAuth(self, user, password):
-        plugin = getUtility(IAuthenticatorPlugin, 'principals')
-        principal = plugin.authenticateCredentials(dict(
-            login=user,
-            password=password))
+        auth = getUtility(IAuthentication)
+        s = "%s:%s" %(user, password)
+
+        auths = "Basic %s" % base64.b64encode(s.encode('utf-8')).decode('iso-8859-15')
+        self.request._auth = auths
+        principal = auth.authenticate(self.request)
+        #plugin = getUtility(IAuthenticatorPlugin, 'principals')
+        #import pdb; pdb.set_trace()
+        #principal = plugin.authenticateCredentials(dict(
+        #    login=user,
+        #    password=password))
         if principal:
-            notify(uvcsite.auth.event.UserLoggedInEvent(Principal(principal.id)))
+            notify(uvcsite.auth.event.UserLoggedInEvent(principal))
             return 1
         return 0
 

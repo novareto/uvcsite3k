@@ -110,7 +110,7 @@ class DirectAccessViewlet(grok.Viewlet):
 class DirectAccess(PageTemplate):
     grok.view(DirectAccessViewlet)
 
-
+from zope.securitypolicy.zopepolicy import settingsForObject
 class HomeFolderValues(Values):
     """This Adapter returns IContent Objects form child folders.
     """

@@ -34,7 +34,6 @@ class BaseDataView(grok.View):
         return grok.title.bind().get(self)
 
     def update(self, filename=None):
-        print (filename)
         self.base_file = self.getFile(filename)
         self.generate()
 

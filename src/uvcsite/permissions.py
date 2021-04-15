@@ -1,5 +1,7 @@
 import grok
 
+class PP(grok.Permission):
+    grok.name('uvc.VC')
 
 class View(grok.Permission):
     grok.name('uvc.ViewContent')
@@ -35,6 +37,7 @@ class Editor(grok.Role):
     grok.name('uvc.Editor')
     grok.permissions(
         View,
+        PP,
         Add,
         Edit,
         AccessHomeFolder)
